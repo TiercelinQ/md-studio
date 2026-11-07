@@ -1,0 +1,78 @@
+<ui:FluentWindow
+    x:Class="MdReader.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:layout="clr-namespace:MdReader.Views.Layout"
+    xmlns:views="clr-namespace:MdReader.Views"
+    xmlns:res="clr-namespace:MdReader.Resources"
+    Title="{x:Static res:Strings.App_Title}"
+    Icon="/Assets/icon.ico"
+    Style="{StaticResource ShellWindowStyle}"
+    WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Zone A: title bar carrying the document tabs (DataContext assigned in the constructor, rules/xaml.md) -->
+        <ui:TitleBar x:Name="AppTitleBar" Grid.Row="0" Style="{StaticResource TitleBarStyle}">
+            <ui:TitleBar.Header>
+                <layout:TabStrip x:Name="Tabs" />
+            </ui:TitleBar.Header>
+        </ui:TitleBar>
+
+        <!-- Zone B -->
+        <layout:CommandBar Grid.Row="1" />
+
+        <!-- Zone C -->
+        <layout:FormatBar Grid.Row="2" Visibility="{Binding IsFormatBarVisible, Converter={StaticResource BooleanToVisibility}}" />
+
+        <!-- Zones D, E, F, G -->
+        <Grid x:Name="Body" Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="ExplorerColumn" Width="0" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <views:DocumentView x:Name="DocumentArea" Grid.Column="2" />
+
+            <GridSplitter
+                x:Name="ExplorerSplitter"
+                Grid.Column="1"
+                AutomationProperties.Name="{x:Static res:Strings.Splitter_Name}"
+                Style="{StaticResource PaneSplitterStyle}"
+                Visibility="{Binding IsExplorerDocked, Converter={StaticResource BooleanToVisibility}}" />
+
+            <Border Style="{StaticResource ExplorerHostStyle}">
+                <views:ExplorerView />
+            </Border>
+
+            <Border Style="{StaticResource OutlineHostStyle}">
+                <views:OutlineView />
+            </Border>
+        </Grid>
+
+        <!-- Zone H -->
+        <layout:StatusBar Grid.Row="4" />
+
+        <ui:ContentDialogHost
+            x:Name="DialogHost"
+            Grid.Row="0"
+            Grid.RowSpan="5"
+            Panel.ZIndex="{StaticResource ZDialog}" />
+
+        <ui:SnackbarPresenter
+            x:Name="NotificationPresenter"
+            Grid.Row="0"
+            Grid.RowSpan="5"
+            Panel.ZIndex="{StaticResource ZSnackbar}"
+            Style="{StaticResource NotificationPresenterStyle}" />
+    </Grid>
+</ui:FluentWindow>

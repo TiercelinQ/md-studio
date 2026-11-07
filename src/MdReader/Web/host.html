@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <!-- Only the virtual host: no network, no inline script (specification T-06). -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+    <title>MdReader</title>
+    <style>
+        html, body { margin: 0; height: 100%; overflow: hidden; background: var(--doc, #ffffff); }
+        iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; visibility: hidden; pointer-events: none; }
+        iframe.active { visibility: visible; pointer-events: auto; }
+    </style>
+    <script src="page.js"></script>
+</head>
+<body></body>
+</html>

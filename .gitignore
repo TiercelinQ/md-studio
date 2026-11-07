@@ -1,0 +1,37 @@
+# --- Build outputs ---------------------------------------------------------
+bin/
+obj/
+/publish/
+/artifacts/
+.env
+
+# --- App runtime data (defensive; normally under %APPDATA%, outside the repo) -
+*.db
+preferences.json
+logs/
+
+# --- Visual Studio / Rider -------------------------------------------------
+.vs/
+.idea/
+*.user
+*.suo
+
+# --- Claude Code -----------------------------------------------------------
+# Personal, never committed.
+.claude/settings.local.json
+.claude/agent-memory/
+# NOTE: .claude/settings.json IS a delivered asset - do NOT ignore it.
+
+# Local work plan - never committed.
+tasks/
+
+# Private specs. Only the published changelog is committed.
+docs/*
+!docs/release/
+docs/release/*
+!docs/release/CHANGELOG.md
+
+# OS noise.
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,19 @@
+<Project>
+  <!-- Shared compiler settings (rules/config.md). Versions derive from the project Version (rules/packaging.md). -->
+  <PropertyGroup>
+    <!-- Versioned Windows target: WebView2CompositionControl needs the Windows SDK projection (deviation E-18). -->
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <LangVersion>14.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisMode>Recommended</AnalysisMode>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Company>Quentin Tiercelin</Company>
+    <Product>MdReader</Product>
+    <Copyright>Copyright (c) 2026 Quentin Tiercelin</Copyright>
+    <!-- AssemblyVersion, FileVersion and InformationalVersion are derived by the SDK from the project Version. -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
+</Project>

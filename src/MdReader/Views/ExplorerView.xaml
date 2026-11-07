@@ -1,0 +1,73 @@
+<UserControl
+    x:Class="MdReader.Views.ExplorerView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:res="clr-namespace:MdReader.Resources"
+    xmlns:vm="clr-namespace:MdReader.ViewModels">
+    <!-- Zone D: C-11 header, C-12 root row and footer, C-08 filter, C-09 tree rows -->
+    <Border AutomationProperties.Name="{x:Static res:Strings.Explorer_Title}" Style="{StaticResource ExplorerPaneStyle}">
+        <DockPanel>
+            <DockPanel DockPanel.Dock="Top" Style="{StaticResource PaneHeaderStyle}">
+                <Button
+                    AutomationProperties.Name="{x:Static res:Strings.Explorer_Collapse}"
+                    Command="{Binding ToggleExplorerCommand}"
+                    DockPanel.Dock="Right"
+                    Style="{StaticResource ToolButtonSmallStyle}"
+                    ToolTip="{x:Static res:Strings.Explorer_Collapse}">
+                    <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconSideLeftGeometry}" />
+                </Button>
+                <TextBlock Style="{StaticResource PaneHeaderTextStyle}" Text="{x:Static res:Strings.Explorer_Title}" />
+            </DockPanel>
+
+            <StackPanel DockPanel.Dock="Top" Visibility="{Binding Explorer.HasFolder, Converter={StaticResource BooleanToVisibility}}">
+                <DockPanel Style="{StaticResource RootFolderRowStyle}">
+                    <ContentControl DockPanel.Dock="Left" Style="{StaticResource RootFolderIconStyle}" Tag="{StaticResource IconFolderOpenGeometry}" />
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource RootFolderNameStyle}" Text="{Binding Explorer.RootName}" />
+                        <TextBlock Style="{StaticResource RootFolderPathStyle}" Text="{Binding Explorer.RootPath}" ToolTip="{Binding Explorer.RootPath}" />
+                    </StackPanel>
+                </DockPanel>
+                <Grid Style="{StaticResource FilterFieldStyle}">
+                    <TextBox
+                        x:Name="FilterBox"
+                        AutomationProperties.Name="{x:Static res:Strings.Explorer_Filter}"
+                        Style="{StaticResource FilterTextBoxStyle}"
+                        Text="{Binding Explorer.FilterText, UpdateSourceTrigger=PropertyChanged}" />
+                    <ContentControl Style="{StaticResource FilterIconStyle}" Tag="{StaticResource IconSearchGeometry}" />
+                    <TextBlock Style="{StaticResource FilterPlaceholderStyle}" Text="{x:Static res:Strings.Explorer_Filter}" />
+                </Grid>
+            </StackPanel>
+
+            <Border DockPanel.Dock="Bottom" Style="{StaticResource ExplorerFooterStyle}" Visibility="{Binding Explorer.HasFolder, Converter={StaticResource BooleanToVisibility}}">
+                <TextBlock Style="{StaticResource ExplorerFooterTextStyle}" Text="{Binding Explorer.FooterText}" />
+            </Border>
+
+            <Grid>
+                <TreeView
+                    x:Name="Tree"
+                    AutomationProperties.Name="{x:Static res:Strings.Explorer_Title}"
+                    ItemContainerStyle="{StaticResource ExplorerTreeItemStyle}"
+                    ItemsSource="{Binding Explorer.Nodes}"
+                    Style="{StaticResource ExplorerTreeStyle}"
+                    Visibility="{Binding Explorer.HasFiles, Converter={StaticResource BooleanToVisibility}}">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type vm:FileNodeViewModel}" ItemsSource="{Binding Children}">
+                            <StackPanel Orientation="Horizontal">
+                                <ContentControl Style="{StaticResource TreeChevronStyle}" />
+                                <ContentControl Style="{StaticResource TreeNodeIconStyle}" />
+                                <TextBlock Style="{StaticResource TreeNodeTextStyle}" Text="{Binding Name}" />
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+
+                <TextBlock Style="{StaticResource PaneEmptyMessageStyle}" Text="{x:Static res:Strings.Explorer_NoMatch}" Visibility="{Binding Explorer.HasNoMatch, Converter={StaticResource BooleanToVisibility}}" />
+                <TextBlock Style="{StaticResource PaneEmptyMessageStyle}" Text="{x:Static res:Strings.Explorer_EmptyFolder}" Visibility="{Binding Explorer.IsEmptyFolder, Converter={StaticResource BooleanToVisibility}}" />
+                <StackPanel Style="{StaticResource PaneEmptyPanelStyle}" Visibility="{Binding Explorer.HasNoFolder, Converter={StaticResource BooleanToVisibility}}">
+                    <TextBlock Style="{StaticResource PaneEmptyMessageStyle}" Text="{x:Static res:Strings.Explorer_NoFolder}" />
+                    <Button Command="{Binding OpenFolderCommand}" Content="{x:Static res:Strings.Command_OpenFolder}" Style="{StaticResource StandardButtonStyle}" />
+                </StackPanel>
+            </Grid>
+        </DockPanel>
+    </Border>
+</UserControl>

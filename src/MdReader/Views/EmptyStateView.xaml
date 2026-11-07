@@ -1,0 +1,22 @@
+<UserControl
+    x:Class="MdReader.Views.EmptyStateView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:res="clr-namespace:MdReader.Resources">
+    <!-- C-25 empty state -->
+    <Grid Style="{StaticResource EmptyStateAreaStyle}">
+        <StackPanel Style="{StaticResource EmptyStateStyle}">
+            <ContentControl Style="{StaticResource EmptyStateIconStyle}" Tag="{StaticResource IconDocsGeometry}" />
+            <TextBlock Style="{StaticResource EmptyStateTitleStyle}" Text="{x:Static res:Strings.Empty_Title}" />
+            <TextBlock Style="{StaticResource EmptyStateTextStyle}" Text="{x:Static res:Strings.Empty_Text}" />
+            <WrapPanel Style="{StaticResource EmptyStateButtonsStyle}">
+                <Button Command="{Binding OpenFolderCommand}" Content="{x:Static res:Strings.Command_OpenFolder}" Style="{StaticResource PrimaryButtonStyle}" />
+                <Button Command="{Binding OpenFileCommand}" Content="{x:Static res:Strings.Command_OpenFile}" Style="{StaticResource StandardButtonStyle}" />
+            </WrapPanel>
+            <Grid Style="{StaticResource DropZoneStyle}">
+                <Rectangle Style="{StaticResource DropZoneBorderStyle}" />
+                <TextBlock Style="{StaticResource DropZoneTextStyle}" Text="{x:Static res:Strings.Empty_Drop}" />
+            </Grid>
+        </StackPanel>
+    </Grid>
+</UserControl>

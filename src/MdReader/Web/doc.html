@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <!-- Only the virtual host: no network, no inline script (specification T-06). -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+    <title>Document</title>
+    <link rel="stylesheet" href="doc.css">
+    <script src="vendor/highlight.min.js"></script>
+    <script src="vendor/turndown.js"></script>
+    <script src="vendor/turndown-plugin-gfm.js"></script>
+    <script src="page.js"></script>
+    <script src="editor.js"></script>
+</head>
+<body>
+    <main id="doc" class="doc" spellcheck="true" lang="fr"></main>
+</body>
+</html>

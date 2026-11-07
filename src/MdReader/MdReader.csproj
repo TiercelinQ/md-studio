@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>MdReader</RootNamespace>
+    <AssemblyName>MdReader</AssemblyName>
+    <!-- Canonical version (rules/versioning.md); AppConfig.AppVersion mirrors it. -->
+    <Version>1.0.0</Version>
+    <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+    <!-- Required by the LibraryImport source generator of NaturalStringComparer. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WPF-UI" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="Serilog.Sinks.Debug" />
+    <PackageReference Include="Microsoft.Web.WebView2" />
+    <PackageReference Include="Markdig" />
+    <PackageReference Include="HtmlSanitizer" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Icon of the executable, window and taskbar, rendered from the annex A drawing that zone A draws in XAML. -->
+    <Resource Include="Assets\icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Page files served on the virtual host, embedded so the single-file executable carries them. -->
+    <EmbeddedResource Include="Web\**\*" LogicalName="web/%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Accessor written next to the .resx, never generated at build time (rules/config.md). -->
+    <EmbeddedResource Update="Resources\Strings.resx">
+      <LogicalName>MdReader.Resources.Strings.resources</LogicalName>
+    </EmbeddedResource>
+    <Compile Update="Resources\Strings.Designer.cs">
+      <DependentUpon>Strings.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="MdReader.Tests" />
+  </ItemGroup>
+
+</Project>

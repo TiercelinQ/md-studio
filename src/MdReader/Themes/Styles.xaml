@@ -1,0 +1,1428 @@
+<!-- ============================================================
+     Styles.xaml - MdReader v1.0.0
+     Reference: design-system.md v1.0 (WPF) - layout.md v1.1 - specification 5.7 / 5.8
+     Only resource references: values come from Tokens*.xaml and Icons.xaml.
+     ============================================================ -->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:conv="clr-namespace:MdReader.Converters"
+    xmlns:controls="clr-namespace:MdReader.Views.Controls"
+    xmlns:local="clr-namespace:MdReader"
+    xmlns:res="clr-namespace:MdReader.Resources">
+
+    <!-- CONVERTERS -->
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+    <conv:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibility" />
+    <!-- Tokens: TreeRowBaseIndent, TreeIndentPerLevel, TreeRowRightPadding (C-09) -->
+    <conv:DepthToIndentConverter
+        x:Key="DepthToIndent"
+        BaseIndent="{StaticResource TreeRowBaseIndent}"
+        IndentPerLevel="{StaticResource TreeIndentPerLevel}"
+        RightPadding="{StaticResource TreeRowRightPadding}" />
+
+    <!-- ============================================================
+         FOCUS (specification 5.5): 2 px AccentBrush ring, offset 1
+         ============================================================ -->
+    <Style x:Key="AppFocusVisualStyle">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border
+                        Margin="{StaticResource FocusRingMargin}"
+                        BorderBrush="{DynamicResource AccentBrush}"
+                        BorderThickness="2"
+                        CornerRadius="{StaticResource CornerRadiusSm}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================================================
+         ICONS (annex A): Viewbox + Path on the 16 grid, one template per stroke token
+         ============================================================ -->
+    <ControlTemplate x:Key="IconTemplate" TargetType="ContentControl">
+        <Viewbox Stretch="Uniform">
+            <Path
+                Width="{StaticResource IconGrid}"
+                Height="{StaticResource IconGrid}"
+                Data="{TemplateBinding Tag}"
+                Stroke="{TemplateBinding Foreground}"
+                StrokeEndLineCap="Round"
+                StrokeLineJoin="Round"
+                StrokeStartLineCap="Round"
+                StrokeThickness="{StaticResource IconStrokeDefault}" />
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="IconTemplateBullets" TargetType="ContentControl">
+        <Viewbox Stretch="Uniform">
+            <Path
+                Width="{StaticResource IconGrid}"
+                Height="{StaticResource IconGrid}"
+                Data="{TemplateBinding Tag}"
+                Stroke="{TemplateBinding Foreground}"
+                StrokeEndLineCap="Round"
+                StrokeLineJoin="Round"
+                StrokeStartLineCap="Round"
+                StrokeThickness="{StaticResource IconStrokeBullets}" />
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="IconTemplateImage" TargetType="ContentControl">
+        <Viewbox Stretch="Uniform">
+            <Path
+                Width="{StaticResource IconGrid}"
+                Height="{StaticResource IconGrid}"
+                Data="{TemplateBinding Tag}"
+                Stroke="{TemplateBinding Foreground}"
+                StrokeEndLineCap="Round"
+                StrokeLineJoin="Round"
+                StrokeStartLineCap="Round"
+                StrokeThickness="{StaticResource IconStrokeImage}" />
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="IconTemplateEmpty" TargetType="ContentControl">
+        <Viewbox Stretch="Uniform">
+            <Path
+                Width="{StaticResource IconGrid}"
+                Height="{StaticResource IconGrid}"
+                Data="{TemplateBinding Tag}"
+                Stroke="{TemplateBinding Foreground}"
+                StrokeEndLineCap="Round"
+                StrokeLineJoin="Round"
+                StrokeStartLineCap="Round"
+                StrokeThickness="{StaticResource IconStrokeEmpty}" />
+        </Viewbox>
+    </ControlTemplate>
+
+    <!-- Icon 16, current text color. Tokens: IconSizeDefault, IconStrokeDefault -->
+    <Style x:Key="IconStyle" TargetType="ContentControl">
+        <Setter Property="Width" Value="{StaticResource IconSizeDefault}" />
+        <Setter Property="Height" Value="{StaticResource IconSizeDefault}" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Template" Value="{StaticResource IconTemplate}" />
+    </Style>
+
+    <!-- Icon 16 in AccentBrush (open buttons) -->
+    <Style x:Key="IconAccentStyle" BasedOn="{StaticResource IconStyle}" TargetType="ContentControl">
+        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+    </Style>
+
+    <!-- Bulleted list icon, stroke IconStrokeBullets -->
+    <Style x:Key="IconBulletsStyle" BasedOn="{StaticResource IconStyle}" TargetType="ContentControl">
+        <Setter Property="Template" Value="{StaticResource IconTemplateBullets}" />
+    </Style>
+
+    <!-- Image icon, stroke IconStrokeImage -->
+    <Style x:Key="IconImageStyle" BasedOn="{StaticResource IconStyle}" TargetType="ContentControl">
+        <Setter Property="Template" Value="{StaticResource IconTemplateImage}" />
+    </Style>
+
+    <!-- Icon 12 (search bar buttons). Token: IconSizeSearchButton -->
+    <Style x:Key="IconSmallStyle" BasedOn="{StaticResource IconStyle}" TargetType="ContentControl">
+        <Setter Property="Width" Value="{StaticResource IconSizeSearchButton}" />
+        <Setter Property="Height" Value="{StaticResource IconSizeSearchButton}" />
+    </Style>
+
+    <!-- Icon 10 (zoom, tab close, chevrons). Token: IconSizeMini -->
+    <Style x:Key="IconMiniStyle" BasedOn="{StaticResource IconStyle}" TargetType="ContentControl">
+        <Setter Property="Width" Value="{StaticResource IconSizeMini}" />
+        <Setter Property="Height" Value="{StaticResource IconSizeMini}" />
+    </Style>
+
+    <!-- Tab file icon 15 in AccentBrush. Tokens: IconSizeTab, TabIconGap -->
+    <Style x:Key="TabIconStyle" BasedOn="{StaticResource IconAccentStyle}" TargetType="ContentControl">
+        <Setter Property="Width" Value="{StaticResource IconSizeTab}" />
+        <Setter Property="Height" Value="{StaticResource IconSizeTab}" />
+        <Setter Property="Margin" Value="{StaticResource TabIconGap}" />
+        <Setter Property="Tag" Value="{StaticResource IconFileGeometry}" />
+    </Style>
+
+    <!-- Root folder icon 20 in FolderBrush. Tokens: IconSizeRootFolder, RootFolderIconGap -->
+    <Style x:Key="RootFolderIconStyle" BasedOn="{StaticResource IconStyle}" TargetType="ContentControl">
+        <Setter Property="Width" Value="{StaticResource IconSizeRootFolder}" />
+        <Setter Property="Height" Value="{StaticResource IconSizeRootFolder}" />
+        <Setter Property="Margin" Value="{StaticResource RootFolderIconGap}" />
+        <Setter Property="Foreground" Value="{DynamicResource FolderBrush}" />
+    </Style>
+
+    <!-- Filter magnifier 13 in Fg3Brush. Tokens: IconSizeFilter, FilterIconMargin -->
+    <Style x:Key="FilterIconStyle" BasedOn="{StaticResource IconStyle}" TargetType="ContentControl">
+        <Setter Property="Width" Value="{StaticResource IconSizeFilter}" />
+        <Setter Property="Height" Value="{StaticResource IconSizeFilter}" />
+        <Setter Property="Margin" Value="{StaticResource FilterIconMargin}" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="IsHitTestVisible" Value="False" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg3Brush}" />
+    </Style>
+
+    <!-- Breadcrumb chevron 9 in Fg3Brush. Tokens: IconSizeBreadcrumb, BreadcrumbChevronMargin -->
+    <Style x:Key="BreadcrumbChevronStyle" BasedOn="{StaticResource IconStyle}" TargetType="ContentControl">
+        <Setter Property="Width" Value="{StaticResource IconSizeBreadcrumb}" />
+        <Setter Property="Height" Value="{StaticResource IconSizeBreadcrumb}" />
+        <Setter Property="Margin" Value="{StaticResource BreadcrumbChevronMargin}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg3Brush}" />
+    </Style>
+
+    <!-- Empty state icon 44, stroke 1, AccentBrush. Tokens: IconSizeEmpty, IconStrokeEmpty, EmptyStateIconMargin -->
+    <Style x:Key="EmptyStateIconStyle" BasedOn="{StaticResource IconAccentStyle}" TargetType="ContentControl">
+        <Setter Property="Template" Value="{StaticResource IconTemplateEmpty}" />
+        <Setter Property="Width" Value="{StaticResource IconSizeEmpty}" />
+        <Setter Property="Height" Value="{StaticResource IconSizeEmpty}" />
+        <Setter Property="Margin" Value="{StaticResource EmptyStateIconMargin}" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+
+    <!-- Application icon 18: AccentBrush rectangle, OnAccentBrush glyph. Tokens: IconSizeApp, RadiusApp, IconStrokeAppGlyph, AppIconMargin -->
+    <Style x:Key="AppIconStyle" TargetType="ContentControl">
+        <Setter Property="Width" Value="{StaticResource IconSizeApp}" />
+        <Setter Property="Height" Value="{StaticResource IconSizeApp}" />
+        <Setter Property="Margin" Value="{StaticResource AppIconMargin}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="IsHitTestVisible" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Viewbox>
+                        <Grid Width="{StaticResource IconGrid}" Height="{StaticResource IconGrid}">
+                            <Path Fill="{DynamicResource AccentBrush}">
+                                <Path.Data>
+                                    <RectangleGeometry RadiusX="{StaticResource RadiusApp}" RadiusY="{StaticResource RadiusApp}" Rect="1,2.5,14,11" />
+                                </Path.Data>
+                            </Path>
+                            <Path
+                                Data="{StaticResource IconAppGlyphGeometry}"
+                                Stroke="{DynamicResource OnAccentBrush}"
+                                StrokeEndLineCap="Round"
+                                StrokeLineJoin="Round"
+                                StrokeStartLineCap="Round"
+                                StrokeThickness="{StaticResource IconStrokeAppGlyph}" />
+                        </Grid>
+                    </Viewbox>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Theme icon: circle + filled left half, current text color. Tokens: IconSizeDefault, IconStrokeDefault -->
+    <Style x:Key="ThemeIconStyle" BasedOn="{StaticResource IconStyle}" TargetType="ContentControl">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Viewbox>
+                        <Grid Width="{StaticResource IconGrid}" Height="{StaticResource IconGrid}">
+                            <Path Data="{StaticResource IconContrastHalfGeometry}" Fill="{TemplateBinding Foreground}" />
+                            <Path Data="{StaticResource IconContrastCircleGeometry}" Stroke="{TemplateBinding Foreground}" StrokeThickness="{StaticResource IconStrokeDefault}" />
+                        </Grid>
+                    </Viewbox>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================================================
+         SHELL: window, title bar, panes, splitter
+         ============================================================ -->
+
+    <!-- Window: BarBrush background, no Mica (DS-04, E-02), FontFamilyUi / FontSizeBody / FgBrush -->
+    <Style x:Key="ShellWindowStyle" BasedOn="{StaticResource {x:Type ui:FluentWindow}}" TargetType="ui:FluentWindow">
+        <Setter Property="Background" Value="{DynamicResource BarBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource FgBrush}" />
+        <Setter Property="FontFamily" Value="{StaticResource FontFamilyUi}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+        <Setter Property="WindowBackdropType" Value="None" />
+        <Setter Property="ExtendsContentIntoTitleBar" Value="True" />
+        <Setter Property="WindowCornerPreference" Value="Round" />
+        <Setter Property="MinWidth" Value="{x:Static local:AppConfig.WindowMinWidth}" />
+        <Setter Property="MinHeight" Value="{x:Static local:AppConfig.WindowMinHeight}" />
+        <Setter Property="Width" Value="{x:Static local:AppConfig.WindowDefaultWidth}" />
+        <Setter Property="Height" Value="{x:Static local:AppConfig.WindowDefaultHeight}" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource AppFocusVisualStyle}" />
+    </Style>
+
+    <!-- Title bar (zone A): ChromeBrush, TitleBarHeight -->
+    <Style x:Key="TitleBarStyle" BasedOn="{StaticResource {x:Type ui:TitleBar}}" TargetType="ui:TitleBar">
+        <Setter Property="Height" Value="{StaticResource TitleBarHeight}" />
+        <Setter Property="Background" Value="{DynamicResource ChromeBrush}" />
+        <Setter Property="ButtonsForeground" Value="{DynamicResource FgBrush}" />
+        <Setter Property="ShowHelp" Value="False" />
+        <Setter Property="Padding" Value="{StaticResource Zero}" />
+    </Style>
+
+    <!-- Explorer host: docked in column 0, overlay pane at 820 or less (specification 3.6).
+         Tokens: NarrowExplorerMaxWidth, ZNarrowPane, Stroke2Brush, BorderRight -->
+    <Style x:Key="ExplorerHostStyle" TargetType="Border">
+        <Setter Property="Grid.Column" Value="0" />
+        <Setter Property="Visibility" Value="Collapsed" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsExplorerVisible}" Value="True">
+                <Setter Property="Visibility" Value="Visible" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsNarrow}" Value="True">
+                <Setter Property="Grid.ColumnSpan" Value="4" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="Width" Value="{StaticResource NarrowExplorerMaxWidth}" />
+                <Setter Property="Panel.ZIndex" Value="{StaticResource ZNarrowPane}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Stroke2Brush}" />
+                <Setter Property="BorderThickness" Value="{StaticResource BorderRight}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Outline host: docked in column 3, overlay pane at 820 or less.
+         Tokens: OutlineWidth, NarrowOutlineMaxWidth, ZNarrowPane, Stroke2Brush, BorderLeft -->
+    <Style x:Key="OutlineHostStyle" TargetType="Border">
+        <Setter Property="Grid.Column" Value="3" />
+        <Setter Property="Width" Value="{StaticResource OutlineWidth}" />
+        <Setter Property="Visibility" Value="Collapsed" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsOutlineVisible}" Value="True">
+                <Setter Property="Visibility" Value="Visible" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsNarrow}" Value="True">
+                <Setter Property="Grid.Column" Value="0" />
+                <Setter Property="Grid.ColumnSpan" Value="4" />
+                <Setter Property="HorizontalAlignment" Value="Right" />
+                <Setter Property="Width" Value="{StaticResource NarrowOutlineMaxWidth}" />
+                <Setter Property="Panel.ZIndex" Value="{StaticResource ZNarrowPane}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Stroke2Brush}" />
+                <Setter Property="BorderThickness" Value="{StaticResource BorderLeft}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-10 splitter: SplitterWidth, StrokeBrush at rest, AccentBrush on hover and drag, keyboard step 16 -->
+    <Style x:Key="PaneSplitterStyle" BasedOn="{StaticResource {x:Type GridSplitter}}" TargetType="GridSplitter">
+        <Setter Property="Width" Value="{StaticResource SplitterWidth}" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="ResizeBehavior" Value="PreviousAndNext" />
+        <Setter Property="ResizeDirection" Value="Columns" />
+        <Setter Property="KeyboardIncrement" Value="{StaticResource SplitterKeyboardIncrement}" />
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="Cursor" Value="SizeWE" />
+        <Setter Property="Background" Value="{DynamicResource StrokeBrush}" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource AppFocusVisualStyle}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GridSplitter">
+                    <Border Background="{TemplateBinding Background}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+            </Trigger>
+            <Trigger Property="IsDragging" Value="True">
+                <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ============================================================
+         BUTTONS: flat template shared by command, tool, zoom and tab buttons (5.7)
+         ============================================================ -->
+    <ControlTemplate x:Key="FlatButtonTemplate" TargetType="ButtonBase">
+        <Border
+            Padding="{TemplateBinding Padding}"
+            Background="{TemplateBinding Background}"
+            BorderBrush="{TemplateBinding BorderBrush}"
+            BorderThickness="{TemplateBinding BorderThickness}"
+            CornerRadius="{StaticResource CornerRadiusSm}">
+            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+        </Border>
+    </ControlTemplate>
+
+    <!-- C-04 tool button 30 x 30: transparent, HoverBrush, PressBrush, OpacityDisabled -->
+    <Style x:Key="ToolButtonStyle" BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
+        <Setter Property="Width" Value="{StaticResource ToolButtonSize}" />
+        <Setter Property="Height" Value="{StaticResource ToolButtonSize}" />
+        <Setter Property="Margin" Value="{StaticResource CommandButtonGap}" />
+        <Setter Property="Padding" Value="{StaticResource Zero}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="{StaticResource Zero}" />
+        <Setter Property="Foreground" Value="{DynamicResource FgBrush}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Cursor" Value="Arrow" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource AppFocusVisualStyle}" />
+        <Setter Property="Template" Value="{StaticResource FlatButtonTemplate}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource HoverBrush}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PressBrush}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="{StaticResource OpacityDisabled}" />
+                <Setter Property="Background" Value="Transparent" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-04 small tool button 26 x 26 (pane header, search bar) -->
+    <Style x:Key="ToolButtonSmallStyle" BasedOn="{StaticResource ToolButtonStyle}" TargetType="Button">
+        <Setter Property="Width" Value="{StaticResource ToolButtonSmallSize}" />
+        <Setter Property="Height" Value="{StaticResource ToolButtonSmallSize}" />
+        <Setter Property="Margin" Value="{StaticResource SearchItemGap}" />
+    </Style>
+
+    <!-- C-04 toggled tool button: AccentSoftBrush background and AccentBrush content when checked -->
+    <Style x:Key="ToolToggleButtonStyle" BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="ToggleButton">
+        <Setter Property="Width" Value="{StaticResource ToolButtonSize}" />
+        <Setter Property="Height" Value="{StaticResource ToolButtonSize}" />
+        <Setter Property="Margin" Value="{StaticResource CommandButtonGap}" />
+        <Setter Property="Padding" Value="{StaticResource Zero}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="{StaticResource Zero}" />
+        <Setter Property="Foreground" Value="{DynamicResource FgBrush}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource AppFocusVisualStyle}" />
+        <Setter Property="Template" Value="{StaticResource FlatButtonTemplate}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource HoverBrush}" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="{StaticResource OpacityDisabled}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-01 command button: CommandButtonHeight, CommandButtonPadding -->
+    <Style x:Key="CommandButtonStyle" BasedOn="{StaticResource ToolButtonStyle}" TargetType="Button">
+        <Setter Property="Width" Value="NaN" />
+        <Setter Property="MinWidth" Value="{StaticResource CommandButtonHeight}" />
+        <Setter Property="Height" Value="{StaticResource CommandButtonHeight}" />
+        <Setter Property="Padding" Value="{StaticResource CommandButtonPadding}" />
+    </Style>
+
+    <!-- C-01 icon-only command button 36 x 36 -->
+    <Style x:Key="CommandIconButtonStyle" BasedOn="{StaticResource ToolButtonStyle}" TargetType="Button">
+        <Setter Property="Width" Value="{StaticResource CommandButtonHeight}" />
+        <Setter Property="Height" Value="{StaticResource CommandButtonHeight}" />
+    </Style>
+
+    <!-- C-01 icon-only toggle 36 x 36 (explorer, outline) -->
+    <Style x:Key="CommandToggleButtonStyle" BasedOn="{StaticResource ToolToggleButtonStyle}" TargetType="ToggleButton">
+        <Setter Property="Width" Value="{StaticResource CommandButtonHeight}" />
+        <Setter Property="Height" Value="{StaticResource CommandButtonHeight}" />
+    </Style>
+
+    <!-- C-01 label: FontSizeBody, CommandLabelMargin, hidden at 820 or less -->
+    <Style x:Key="CommandLabelStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="{StaticResource CommandLabelMargin}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsNarrow}" Value="True">
+                <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-15 standard button: StandardButtonHeight, StandardButtonPadding, DocBrush, Stroke2Brush -->
+    <Style x:Key="StandardButtonStyle" BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
+        <Setter Property="Height" Value="{StaticResource StandardButtonHeight}" />
+        <Setter Property="Padding" Value="{StaticResource StandardButtonPadding}" />
+        <Setter Property="Margin" Value="{StaticResource EmptyStateButtonMargin}" />
+        <Setter Property="Background" Value="{DynamicResource DocBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Stroke2Brush}" />
+        <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}" />
+        <Setter Property="Foreground" Value="{DynamicResource FgBrush}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource AppFocusVisualStyle}" />
+        <Setter Property="Template" Value="{StaticResource FlatButtonTemplate}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource HoverBrush}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="{StaticResource OpacityDisabled}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-15 primary button: AccentBrush fill and border, OnAccentBrush text, OpacityPrimaryHover on hover -->
+    <Style x:Key="PrimaryButtonStyle" BasedOn="{StaticResource StandardButtonStyle}" TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource OnAccentBrush}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                <Setter Property="Opacity" Value="{StaticResource OpacityPrimaryHover}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-16 mini button in the disk banner: MiniButtonHeight, MiniButtonPadding -->
+    <Style x:Key="BannerButtonStyle" BasedOn="{StaticResource StandardButtonStyle}" TargetType="Button">
+        <Setter Property="Height" Value="{StaticResource MiniButtonHeight}" />
+        <Setter Property="Padding" Value="{StaticResource MiniButtonPadding}" />
+        <Setter Property="Margin" Value="{StaticResource BannerButtonMargin}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeCaption}" />
+    </Style>
+
+    <!-- C-22 zoom button: ZoomButtonHeight, ZoomButtonMinWidth, FontSizeCaption, Fg2Brush -->
+    <Style x:Key="ZoomButtonStyle" BasedOn="{StaticResource ToolButtonStyle}" TargetType="Button">
+        <Setter Property="Width" Value="NaN" />
+        <Setter Property="Height" Value="{StaticResource ZoomButtonHeight}" />
+        <Setter Property="MinWidth" Value="{StaticResource ZoomButtonMinWidth}" />
+        <Setter Property="Padding" Value="{StaticResource ZoomButtonPadding}" />
+        <Setter Property="Margin" Value="{StaticResource ZoomButtonGap}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeCaption}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg2Brush}" />
+    </Style>
+
+    <!-- ============================================================
+         ZONE A: document tabs (C-06)
+         ============================================================ -->
+
+    <!-- C-06 "new tab" button 30 x 30, plus icon 14 in Fg2Brush -->
+    <Style x:Key="NewTabButtonStyle" BasedOn="{StaticResource ToolButtonStyle}" TargetType="Button">
+        <Setter Property="Width" Value="{StaticResource NewTabButtonSize}" />
+        <Setter Property="Height" Value="{StaticResource NewTabButtonSize}" />
+        <Setter Property="Margin" Value="{StaticResource NewTabMargin}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg2Brush}" />
+        <Setter Property="ToolTip" Value="{x:Static res:Strings.NewTab_Tooltip}" />
+        <Setter Property="AutomationProperties.Name" Value="{x:Static res:Strings.Command_OpenFile}" />
+    </Style>
+
+    <!-- C-06 tab close button 22 x 22, PressBrush on hover -->
+    <Style x:Key="TabCloseButtonStyle" BasedOn="{StaticResource ToolButtonStyle}" TargetType="Button">
+        <Setter Property="Width" Value="{StaticResource TabCloseSize}" />
+        <Setter Property="Height" Value="{StaticResource TabCloseSize}" />
+        <Setter Property="Margin" Value="{StaticResource Zero}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg2Brush}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PressBrush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Tab strip: horizontal scroll without bar, "new tab" button after the last tab -->
+    <Style x:Key="DocumentTabsStyle" BasedOn="{StaticResource {x:Type TabControl}}" TargetType="TabControl">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="{StaticResource Zero}" />
+        <Setter Property="Padding" Value="{StaticResource Zero}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabControl">
+                    <ScrollViewer
+                        CanContentScroll="False"
+                        HorizontalScrollBarVisibility="Hidden"
+                        VerticalScrollBarVisibility="Disabled">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel IsItemsHost="True" Orientation="Horizontal" />
+                            <Button Command="{Binding OpenFileCommand}" Style="{StaticResource NewTabButtonStyle}">
+                                <ContentControl
+                                    Width="{StaticResource IconSizeNewTab}"
+                                    Height="{StaticResource IconSizeNewTab}"
+                                    Style="{StaticResource IconStyle}"
+                                    Tag="{StaticResource IconPlusGeometry}" />
+                            </Button>
+                        </StackPanel>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- C-06 tab: TabHeight, TabMinWidth..TabMaxWidth, CornerRadiusTab, TabPadding, Fg2Brush;
+         active: BarBrush + FgBrush; modified dot ModifiedDotSize in Fg2Brush replaced by close on hover -->
+    <Style x:Key="DocumentTabItemStyle" BasedOn="{StaticResource {x:Type TabItem}}" TargetType="TabItem">
+        <Setter Property="Height" Value="{StaticResource TabHeight}" />
+        <Setter Property="MinWidth" Value="{StaticResource TabMinWidth}" />
+        <Setter Property="MaxWidth" Value="{StaticResource TabMaxWidth}" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="ToolTip" Value="{Binding RelativePath}" />
+        <Setter Property="AutomationProperties.Name" Value="{Binding FileName}" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource AppFocusVisualStyle}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <Border
+                        x:Name="Root"
+                        Padding="{StaticResource TabPadding}"
+                        Background="Transparent"
+                        CornerRadius="{StaticResource CornerRadiusTab}">
+                        <DockPanel>
+                            <ContentControl DockPanel.Dock="Left" Style="{StaticResource TabIconStyle}" />
+                            <Grid Margin="{StaticResource TabCloseMargin}" DockPanel.Dock="Right">
+                                <Ellipse
+                                    x:Name="Dot"
+                                    Width="{StaticResource ModifiedDotSize}"
+                                    Height="{StaticResource ModifiedDotSize}"
+                                    AutomationProperties.Name="{x:Static res:Strings.Tab_Modified}"
+                                    Fill="{DynamicResource Fg2Brush}"
+                                    ToolTip="{x:Static res:Strings.Tab_Modified}"
+                                    Visibility="Collapsed" />
+                                <Button
+                                    x:Name="Close"
+                                    AutomationProperties.Name="{Binding FileName, StringFormat={x:Static res:Strings.Tab_Close_Format}}"
+                                    Command="{Binding DataContext.CloseTabCommand, RelativeSource={RelativeSource AncestorType=TabControl}}"
+                                    CommandParameter="{Binding}"
+                                    Style="{StaticResource TabCloseButtonStyle}"
+                                    Visibility="Hidden">
+                                    <ContentControl Style="{StaticResource IconMiniStyle}" Tag="{StaticResource IconCloseGeometry}" />
+                                </Button>
+                            </Grid>
+                            <TextBlock
+                                x:Name="Title"
+                                FontSize="{StaticResource FontSizeSmall}"
+                                Foreground="{DynamicResource Fg2Brush}"
+                                Text="{Binding FileName}"
+                                TextTrimming="CharacterEllipsis"
+                                VerticalAlignment="Center" />
+                        </DockPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource HoverBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource BarBrush}" />
+                            <Setter TargetName="Title" Property="Foreground" Value="{DynamicResource FgBrush}" />
+                            <Setter TargetName="Close" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding IsModified}" Value="True">
+                            <Setter TargetName="Dot" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="Close" Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Close" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="Dot" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================================================
+         ZONES B and C: command and formatting bars
+         ============================================================ -->
+
+    <!-- Zone B: BarBrush, StrokeBrush bottom rule, CommandBarMinHeight, CommandBarPadding -->
+    <Style x:Key="CommandBarStyle" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource BarBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource StrokeBrush}" />
+        <Setter Property="BorderThickness" Value="{StaticResource BorderBottom}" />
+        <Setter Property="MinHeight" Value="{StaticResource CommandBarMinHeight}" />
+        <Setter Property="Padding" Value="{StaticResource CommandBarPadding}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsCompact}" Value="True">
+                <Setter Property="Padding" Value="{StaticResource CommandBarCompactPadding}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Layout grid of zone B: centered in the bar (MinHeight CommandBarMinHeight), one or two rows -->
+    <Style x:Key="CommandBarLayoutStyle" TargetType="Grid">
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- Left group of zone B -->
+    <Style x:Key="CommandGroupStyle" TargetType="StackPanel">
+        <Setter Property="Orientation" Value="Horizontal" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- Right group of zone B, moved to a second row at 560 or less -->
+    <Style x:Key="CommandRightGroupStyle" BasedOn="{StaticResource CommandGroupStyle}" TargetType="StackPanel">
+        <Setter Property="Grid.Column" Value="1" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsCompact}" Value="True">
+                <Setter Property="Grid.Column" Value="0" />
+                <Setter Property="Grid.Row" Value="1" />
+                <Setter Property="HorizontalAlignment" Value="Right" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-03 vertical separator: SeparatorWidth, Stroke2Brush, CommandSeparatorMargin -->
+    <Style x:Key="CommandSeparatorStyle" BasedOn="{StaticResource {x:Type Separator}}" TargetType="Separator">
+        <Setter Property="Width" Value="{StaticResource SeparatorWidth}" />
+        <Setter Property="Margin" Value="{StaticResource CommandSeparatorMargin}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Separator">
+                    <Rectangle Fill="{DynamicResource Stroke2Brush}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- C-03 separator of zone C: FormatSeparatorMargin -->
+    <Style x:Key="FormatSeparatorStyle" BasedOn="{StaticResource CommandSeparatorStyle}" TargetType="Separator">
+        <Setter Property="Margin" Value="{StaticResource FormatSeparatorMargin}" />
+    </Style>
+
+    <!-- C-02 segmented control container: CornerRadiusMd, HoverBrush, SegmentContainerPadding -->
+    <Style x:Key="SegmentContainerStyle" TargetType="Border">
+        <Setter Property="CornerRadius" Value="{StaticResource CornerRadiusMd}" />
+        <Setter Property="Background" Value="{DynamicResource HoverBrush}" />
+        <Setter Property="Padding" Value="{StaticResource SegmentContainerPadding}" />
+        <Setter Property="Margin" Value="{StaticResource SegmentContainerMargin}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- C-02 segment: SegmentHeight, SegmentPadding, Fg2Brush; checked: DocBrush, FgBrush,
+         StrokeBrush border (no shadow, E-01), AccentBrush indicator 16 x 2 -->
+    <Style x:Key="SegmentRadioStyle" BasedOn="{StaticResource {x:Type RadioButton}}" TargetType="RadioButton">
+        <Setter Property="Height" Value="{StaticResource SegmentHeight}" />
+        <Setter Property="Padding" Value="{StaticResource SegmentPadding}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg2Brush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource AppFocusVisualStyle}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border
+                        x:Name="Root"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{StaticResource BorderWidth}"
+                        CornerRadius="{StaticResource CornerRadiusSm}">
+                        <Grid>
+                            <ContentPresenter VerticalAlignment="Center" />
+                            <Border
+                                x:Name="Indicator"
+                                Width="{StaticResource SegmentIndicatorWidth}"
+                                Height="{StaticResource SegmentIndicatorHeight}"
+                                Margin="{StaticResource SegmentIndicatorMargin}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom"
+                                Background="{DynamicResource AccentBrush}"
+                                CornerRadius="{StaticResource CornerRadiusIndicator}"
+                                Visibility="Hidden" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Indicator" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource HoverBrush}" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="{DynamicResource DocBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource StrokeBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource FgBrush}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="{StaticResource OpacityDisabled}" />
+            </Trigger>
+            <DataTrigger Binding="{Binding IsCompact}" Value="True">
+                <Setter Property="Padding" Value="{StaticResource SegmentCompactPadding}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-02 segment label: SegmentLabelMargin, FontSizeBody -->
+    <Style x:Key="SegmentLabelStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="{StaticResource SegmentLabelMargin}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+    </Style>
+
+    <!-- Zone C: BarBrush, StrokeBrush bottom rule, FormatBarHeight, FormatBarPadding -->
+    <Style x:Key="FormatBarStyle" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource BarBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource StrokeBrush}" />
+        <Setter Property="BorderThickness" Value="{StaticResource BorderBottom}" />
+        <Setter Property="Height" Value="{StaticResource FormatBarHeight}" />
+        <Setter Property="Padding" Value="{StaticResource FormatBarPadding}" />
+    </Style>
+
+    <!-- Horizontal scrolling of zone C (thin system bar, specification C-26) -->
+    <Style x:Key="HorizontalBarScrollStyle" BasedOn="{StaticResource {x:Type ScrollViewer}}" TargetType="ScrollViewer">
+        <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Focusable" Value="False" />
+    </Style>
+
+    <!-- C-05 paragraph style list: SegmentHeight, ParagraphStyleMinWidth, DocBrush, Stroke2Brush -->
+    <Style x:Key="ParagraphStyleComboStyle" BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="ComboBox">
+        <Setter Property="MinWidth" Value="{StaticResource ParagraphStyleMinWidth}" />
+        <Setter Property="Padding" Value="{StaticResource ParagraphStylePadding}" />
+        <Setter Property="Margin" Value="{StaticResource ParagraphStyleMargin}" />
+        <Setter Property="Background" Value="{DynamicResource DocBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Stroke2Brush}" />
+        <Setter Property="Foreground" Value="{DynamicResource FgBrush}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- ============================================================
+         ZONE D: explorer (C-08, C-09, C-11, C-12)
+         ============================================================ -->
+
+    <!-- Explorer pane: PaneBrush -->
+    <Style x:Key="ExplorerPaneStyle" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource PaneBrush}" />
+    </Style>
+
+    <!-- Outline pane: PaneBrush, StrokeBrush left rule (docked) -->
+    <Style x:Key="OutlinePaneStyle" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource PaneBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource StrokeBrush}" />
+        <Setter Property="BorderThickness" Value="{StaticResource BorderLeft}" />
+    </Style>
+
+    <!-- C-11 pane header: PaneHeaderHeight, PaneHeaderMargin -->
+    <Style x:Key="PaneHeaderStyle" TargetType="DockPanel">
+        <Setter Property="Height" Value="{StaticResource PaneHeaderHeight}" />
+        <Setter Property="Margin" Value="{StaticResource PaneHeaderMargin}" />
+        <Setter Property="LastChildFill" Value="True" />
+    </Style>
+
+    <!-- C-11 header text: FontSizeCaption, semibold, Fg2Brush -->
+    <Style x:Key="PaneHeaderTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeCaption}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightSemiBold}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg2Brush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- C-12 root folder row: RootFolderMargin -->
+    <Style x:Key="RootFolderRowStyle" TargetType="DockPanel">
+        <Setter Property="Margin" Value="{StaticResource RootFolderMargin}" />
+    </Style>
+
+    <!-- C-12 root folder name: FontSizeBody, semibold, FgBrush -->
+    <Style x:Key="RootFolderNameStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightSemiBold}" />
+        <Setter Property="Foreground" Value="{DynamicResource FgBrush}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+
+    <!-- C-12 root folder path: FontSizeMicro, Fg3Brush, one line -->
+    <Style x:Key="RootFolderPathStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeMicro}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg3Brush}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+
+    <!-- C-08 filter field container: FilterFieldHeight, FilterFieldMargin -->
+    <Style x:Key="FilterFieldStyle" TargetType="Grid">
+        <Setter Property="Height" Value="{StaticResource FilterFieldHeight}" />
+        <Setter Property="Margin" Value="{StaticResource FilterFieldMargin}" />
+    </Style>
+
+    <!-- C-08 field: DocBrush, Stroke2Brush, FontSizeBody -->
+    <Style x:Key="FieldTextBoxStyle" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
+        <Setter Property="Background" Value="{DynamicResource DocBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Stroke2Brush}" />
+        <Setter Property="Foreground" Value="{DynamicResource FgBrush}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <!-- C-08 filter field: FilterTextPadding (room for the magnifier) -->
+    <Style x:Key="FilterTextBoxStyle" BasedOn="{StaticResource FieldTextBoxStyle}" TargetType="TextBox">
+        <Setter Property="Padding" Value="{StaticResource FilterTextPadding}" />
+        <Setter Property="MinHeight" Value="{StaticResource FilterFieldHeight}" />
+    </Style>
+
+    <!-- C-08 filter placeholder: Fg3Brush, shown while the filter is empty -->
+    <Style x:Key="FilterPlaceholderStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="{StaticResource FilterPlaceholderMargin}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="IsHitTestVisible" Value="False" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg3Brush}" />
+        <Setter Property="Visibility" Value="Collapsed" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Explorer.FilterText}" Value="">
+                <Setter Property="Visibility" Value="Visible" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-09 tree: TreeAreaMargin, transparent -->
+    <Style x:Key="ExplorerTreeStyle" BasedOn="{StaticResource {x:Type TreeView}}" TargetType="TreeView">
+        <Setter Property="Margin" Value="{StaticResource TreeAreaMargin}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="{StaticResource Zero}" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+    </Style>
+
+    <!-- C-09 row: TreeRowHeight, CornerRadiusSm, indent DepthToIndent; hover HoverBrush;
+         selected PressBrush + AccentBarWidth bar (TreeAccentBarMargin) -->
+    <Style x:Key="ExplorerTreeItemStyle" BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">
+        <Setter Property="IsExpanded" Value="{Binding IsOpen, Mode=TwoWay}" />
+        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+        <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BooleanToVisibility}}" />
+        <Setter Property="AutomationProperties.Name" Value="{Binding Name}" />
+        <Setter Property="Foreground" Value="{DynamicResource FgBrush}" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource AppFocusVisualStyle}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TreeViewItem">
+                    <StackPanel>
+                        <Border
+                            x:Name="Row"
+                            Height="{StaticResource TreeRowHeight}"
+                            Margin="{StaticResource TreeRowMargin}"
+                            Background="Transparent"
+                            CornerRadius="{StaticResource CornerRadiusSm}">
+                            <Grid>
+                                <Border
+                                    x:Name="AccentBar"
+                                    Width="{StaticResource AccentBarWidth}"
+                                    Margin="{StaticResource TreeAccentBarMargin}"
+                                    HorizontalAlignment="Left"
+                                    Background="{DynamicResource AccentBrush}"
+                                    Visibility="Hidden" />
+                                <ContentPresenter Margin="{Binding Depth, Converter={StaticResource DepthToIndent}}" VerticalAlignment="Center" ContentSource="Header" />
+                            </Grid>
+                        </Border>
+                        <ItemsPresenter x:Name="ItemsHost" Visibility="Collapsed" />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded" Value="True">
+                            <Setter TargetName="ItemsHost" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger SourceName="Row" Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Row" Property="Background" Value="{DynamicResource HoverBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Row" Property="Background" Value="{DynamicResource PressBrush}" />
+                            <Setter TargetName="AccentBar" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- C-09 chevron: 10 in a TreeChevronBox, Fg3Brush, turned by ChevronOpenAngle when open; space kept for files -->
+    <Style x:Key="TreeChevronStyle" BasedOn="{StaticResource IconMiniStyle}" TargetType="ContentControl">
+        <Setter Property="Tag" Value="{StaticResource IconChevronRightGeometry}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg3Brush}" />
+        <Setter Property="Margin" Value="{StaticResource BreadcrumbChevronMargin}" />
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsFolder}" Value="False">
+                <Setter Property="Visibility" Value="Hidden" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsOpen}" Value="True">
+                <Setter Property="RenderTransform">
+                    <Setter.Value>
+                        <RotateTransform Angle="{StaticResource ChevronOpenAngle}" />
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-09 node icon: folder / open folder in FolderBrush, file in AccentBrush -->
+    <Style x:Key="TreeNodeIconStyle" BasedOn="{StaticResource IconStyle}" TargetType="ContentControl">
+        <Setter Property="Tag" Value="{StaticResource IconFileGeometry}" />
+        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsFolder}" Value="True">
+                <Setter Property="Tag" Value="{StaticResource IconFolderGeometry}" />
+                <Setter Property="Foreground" Value="{DynamicResource FolderBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsOpen}" Value="True">
+                <Setter Property="Tag" Value="{StaticResource IconFolderOpenGeometry}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-09 node name: FontSizeBody, FgBrush, TreeItemGap -->
+    <Style x:Key="TreeNodeTextStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="{StaticResource TreeItemGap}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+
+    <!-- C-12 footer: ExplorerFooterPadding, StrokeBrush top rule -->
+    <Style x:Key="ExplorerFooterStyle" TargetType="Border">
+        <Setter Property="Padding" Value="{StaticResource ExplorerFooterPadding}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource StrokeBrush}" />
+        <Setter Property="BorderThickness" Value="{StaticResource BorderTop}" />
+    </Style>
+
+    <!-- C-12 footer text: FontSizeCaption, Fg3Brush -->
+    <Style x:Key="ExplorerFooterTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeCaption}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg3Brush}" />
+    </Style>
+
+    <!-- C-12 empty pane message: PaneEmptyMargin, FontSizeSmall, Fg3Brush -->
+    <Style x:Key="PaneEmptyMessageStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="{StaticResource PaneEmptyMargin}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg3Brush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+    </Style>
+
+    <!-- Panel of the "no folder" message with its button -->
+    <Style x:Key="PaneEmptyPanelStyle" TargetType="StackPanel">
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Style.Resources>
+            <ResourceDictionary>
+                <Style BasedOn="{StaticResource StandardButtonStyle}" TargetType="Button">
+                    <Setter Property="Margin" Value="{StaticResource PaneEmptyButtonMargin}" />
+                </Style>
+            </ResourceDictionary>
+        </Style.Resources>
+    </Style>
+
+    <!-- ============================================================
+         ZONE G: outline (C-13)
+         ============================================================ -->
+
+    <!-- C-13 list: OutlineListPadding, transparent -->
+    <Style x:Key="OutlineListStyle" BasedOn="{StaticResource {x:Type ListBox}}" TargetType="ListBox">
+        <Setter Property="Padding" Value="{StaticResource OutlineListPadding}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="{StaticResource Zero}" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+    </Style>
+
+    <!-- C-13 entry: OutlineRowHeight, CornerRadiusSm, FontSizeSmall, Fg2Brush; level paddings;
+         current: AccentSoftBrush + AccentTextBrush + AccentBarWidth bar (OutlineAccentBarMargin) -->
+    <Style x:Key="OutlineItemStyle" BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="ListBoxItem">
+        <Setter Property="Height" Value="{StaticResource OutlineRowHeight}" />
+        <Setter Property="Padding" Value="{StaticResource OutlineLevel1Padding}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg2Brush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="AutomationProperties.Name" Value="{Binding Text}" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource AppFocusVisualStyle}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border
+                        x:Name="Root"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{StaticResource CornerRadiusSm}">
+                        <Grid>
+                            <Border
+                                x:Name="AccentBar"
+                                Width="{StaticResource AccentBarWidth}"
+                                Margin="{StaticResource OutlineAccentBarMargin}"
+                                HorizontalAlignment="Left"
+                                Background="{DynamicResource AccentBrush}"
+                                Visibility="Hidden" />
+                            <ContentPresenter Margin="{TemplateBinding Padding}" VerticalAlignment="Center">
+                                <ContentPresenter.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                                    </Style>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="AccentBar" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Level}" Value="1">
+                <Setter Property="FontWeight" Value="{StaticResource FontWeightSemiBold}" />
+                <Setter Property="Foreground" Value="{DynamicResource FgBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Level}" Value="2">
+                <Setter Property="Padding" Value="{StaticResource OutlineLevel2Padding}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Level}" Value="3">
+                <Setter Property="Padding" Value="{StaticResource OutlineLevel3Padding}" />
+                <Setter Property="FontSize" Value="{StaticResource FontSizeCaption}" />
+            </DataTrigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource HoverBrush}" />
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ============================================================
+         ZONE F: document area (C-14, disk banner, host, C-25)
+         ============================================================ -->
+
+    <!-- Document area: DocBrush -->
+    <Style x:Key="DocumentAreaStyle" TargetType="Grid">
+        <Setter Property="Background" Value="{DynamicResource DocBrush}" />
+    </Style>
+
+    <!-- C-14 band: PaneHeaderHeight, DocumentHeaderPadding, StrokeBrush rule (AccentBrush in editing) -->
+    <Style x:Key="DocumentHeaderStyle" TargetType="Border">
+        <Setter Property="Height" Value="{StaticResource PaneHeaderHeight}" />
+        <Setter Property="Padding" Value="{StaticResource DocumentHeaderPadding}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource StrokeBrush}" />
+        <Setter Property="BorderThickness" Value="{StaticResource BorderBottom}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-14 folders of the breadcrumb, hidden at 560 or less -->
+    <Style x:Key="BreadcrumbFoldersStyle" TargetType="ItemsControl">
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsCompact}" Value="True">
+                <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-14 folder name: FontSizeSmall, Fg2Brush -->
+    <Style x:Key="BreadcrumbTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg2Brush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- C-14 file name: FontSizeSmall, semibold, FgBrush -->
+    <Style x:Key="BreadcrumbFileStyle" BasedOn="{StaticResource BreadcrumbTextStyle}" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightSemiBold}" />
+        <Setter Property="Foreground" Value="{DynamicResource FgBrush}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+
+    <!-- C-14 search bar: SearchBarMargin, shown while the search is open -->
+    <Style x:Key="SearchBarStyle" TargetType="StackPanel">
+        <Setter Property="Orientation" Value="Horizontal" />
+        <Setter Property="Margin" Value="{StaticResource SearchBarMargin}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Visibility" Value="Collapsed" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ActiveDocument.IsSearchOpen}" Value="True">
+                <Setter Property="Visibility" Value="Visible" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-08 search field: SearchFieldHeight, SearchFieldWidth (SearchFieldNarrowWidth at 820 or less), FontSizeSmall -->
+    <Style x:Key="SearchTextBoxStyle" BasedOn="{StaticResource FieldTextBoxStyle}" TargetType="TextBox">
+        <Setter Property="Width" Value="{StaticResource SearchFieldWidth}" />
+        <Setter Property="MinHeight" Value="{StaticResource SearchFieldHeight}" />
+        <Setter Property="Padding" Value="{StaticResource SearchFieldPadding}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsNarrow}" Value="True">
+                <Setter Property="Width" Value="{StaticResource SearchFieldNarrowWidth}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-14 search placeholder: Fg3Brush, shown while the search field is empty -->
+    <Style x:Key="SearchPlaceholderStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="{StaticResource SearchFieldPadding}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="IsHitTestVisible" Value="False" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg3Brush}" />
+        <Setter Property="Visibility" Value="Collapsed" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ActiveDocument.SearchQuery}" Value="">
+                <Setter Property="Visibility" Value="Visible" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-14 counter: SearchCounterMinWidth, FontSizeCaption, Fg3Brush -->
+    <Style x:Key="SearchCounterStyle" TargetType="TextBlock">
+        <Setter Property="MinWidth" Value="{StaticResource SearchCounterMinWidth}" />
+        <Setter Property="Margin" Value="{StaticResource SearchItemGap}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeCaption}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg3Brush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- Disk banner (E-07): AccentSoftBrush, BannerPadding, StrokeBrush bottom rule; shown on a disk change -->
+    <Style x:Key="DiskBannerStyle" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+        <Setter Property="Padding" Value="{StaticResource BannerPadding}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource StrokeBrush}" />
+        <Setter Property="BorderThickness" Value="{StaticResource BorderBottom}" />
+        <Setter Property="Visibility" Value="Collapsed" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ActiveDocument.IsDiskChanged}" Value="True">
+                <Setter Property="Visibility" Value="Visible" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Disk banner text: FontSizeBody, FgBrush -->
+    <Style x:Key="BannerTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+        <Setter Property="Foreground" Value="{DynamicResource FgBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <!-- Document page host: hidden (kept loaded) while no document is open -->
+    <Style x:Key="DocumentHostStyle" TargetType="controls:DocumentHost">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding HasNoDocument}" Value="True">
+                <Setter Property="Visibility" Value="Hidden" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- C-25 empty state area: DocBrush -->
+    <Style x:Key="EmptyStateAreaStyle" TargetType="Grid">
+        <Setter Property="Background" Value="{DynamicResource DocBrush}" />
+    </Style>
+
+    <!-- C-25 content: EmptyStateMaxWidth, centered, EmptyStateMargin -->
+    <Style x:Key="EmptyStateStyle" TargetType="StackPanel">
+        <Setter Property="MaxWidth" Value="{StaticResource EmptyStateMaxWidth}" />
+        <Setter Property="Margin" Value="{StaticResource EmptyStateMargin}" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- C-25 title: FontSizeEmptyTitle, semibold, FgBrush -->
+    <Style x:Key="EmptyStateTitleStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="{StaticResource EmptyStateTitleMargin}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeEmptyTitle}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightSemiBold}" />
+        <Setter Property="Foreground" Value="{DynamicResource FgBrush}" />
+        <Setter Property="TextAlignment" Value="Center" />
+    </Style>
+
+    <!-- C-25 text: FontSizeBody, LineHeightBody, Fg2Brush -->
+    <Style x:Key="EmptyStateTextStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="{StaticResource EmptyStateTextMargin}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+        <Setter Property="LineHeight" Value="{StaticResource LineHeightBody}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg2Brush}" />
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <!-- C-25 buttons, wrapping allowed -->
+    <Style x:Key="EmptyStateButtonsStyle" TargetType="WrapPanel">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+
+    <!-- C-25 drop zone: DropZoneMargin -->
+    <Style x:Key="DropZoneStyle" TargetType="Grid">
+        <Setter Property="Margin" Value="{StaticResource DropZoneMargin}" />
+    </Style>
+
+    <!-- C-25 dashed border: Stroke2Brush, DashPattern, RadiusLg -->
+    <Style x:Key="DropZoneBorderStyle" TargetType="Rectangle">
+        <Setter Property="Stroke" Value="{DynamicResource Stroke2Brush}" />
+        <Setter Property="StrokeThickness" Value="{StaticResource StrokeThin}" />
+        <Setter Property="StrokeDashArray" Value="{StaticResource DashPattern}" />
+        <Setter Property="RadiusX" Value="{StaticResource RadiusLg}" />
+        <Setter Property="RadiusY" Value="{StaticResource RadiusLg}" />
+    </Style>
+
+    <!-- C-25 drop zone text: FontSizeSmall, Fg3Brush, DropZoneTextMargin -->
+    <Style x:Key="DropZoneTextStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="{StaticResource DropZoneTextMargin}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg3Brush}" />
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <!-- ============================================================
+         ZONE H: status bar (C-17, C-22, C-24)
+         ============================================================ -->
+
+    <!-- C-24 bar: StatusBarHeight, StatusBarPadding, ChromeBrush, StrokeBrush top rule -->
+    <Style x:Key="StatusBarStyle" TargetType="Border">
+        <Setter Property="Height" Value="{StaticResource StatusBarHeight}" />
+        <Setter Property="Padding" Value="{StaticResource StatusBarPadding}" />
+        <Setter Property="Background" Value="{DynamicResource ChromeBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource StrokeBrush}" />
+        <Setter Property="BorderThickness" Value="{StaticResource BorderTop}" />
+    </Style>
+
+    <!-- C-24 item: FontSizeCaption, Fg2Brush, StatusItemMargin -->
+    <Style x:Key="StatusTextStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="{StaticResource StatusItemMargin}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeCaption}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg2Brush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- C-24 path: stretches, one line with ellipsis -->
+    <Style x:Key="StatusPathStyle" BasedOn="{StaticResource StatusTextStyle}" TargetType="TextBlock">
+        <Setter Property="Margin" Value="{StaticResource Zero}" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+
+    <!-- C-17 "Modifié" badge: AccentSoftBrush, CornerRadiusBadge, BadgePadding -->
+    <Style x:Key="ModifiedBadgeStyle" TargetType="Border">
+        <Setter Property="Margin" Value="{StaticResource StatusItemMargin}" />
+        <Setter Property="Padding" Value="{StaticResource BadgePadding}" />
+        <Setter Property="Background" Value="{DynamicResource AccentSoftBrush}" />
+        <Setter Property="CornerRadius" Value="{StaticResource CornerRadiusBadge}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- C-17 badge text: FontSizeCaption, semibold, AccentTextBrush (C21) -->
+    <Style x:Key="BadgeTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeCaption}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightSemiBold}" />
+        <Setter Property="Foreground" Value="{DynamicResource AccentTextBrush}" />
+    </Style>
+
+    <!-- C-22 zoom group: StatusItemMargin -->
+    <Style x:Key="ZoomGroupStyle" TargetType="StackPanel">
+        <Setter Property="Orientation" Value="Horizontal" />
+        <Setter Property="Margin" Value="{StaticResource StatusItemMargin}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- ============================================================
+         FEEDBACK: notification (C-18) and dialog (C-19)
+         ============================================================ -->
+
+    <!-- Notification anchor: bottom center, 40 from the bottom (layout.md 5, E-05). Token: NotificationMargin -->
+    <Style x:Key="NotificationPresenterStyle" TargetType="ui:SnackbarPresenter">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="Margin" Value="{StaticResource NotificationMargin}" />
+    </Style>
+
+    <!-- C-18 notification: DocBrush, Stroke2Brush, CornerRadiusMd, BorderWidthAccent bar in AccentBrush
+         (DangerBrush for an error), FontSizeBody, close button only for errors, no icon (E-05) -->
+    <Style x:Key="NotificationStyle" BasedOn="{StaticResource {x:Type ui:Snackbar}}" TargetType="ui:Snackbar">
+        <Setter Property="AutomationProperties.LiveSetting" Value="Polite" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ui:Snackbar">
+                    <Border
+                        Background="{DynamicResource DocBrush}"
+                        BorderBrush="{DynamicResource Stroke2Brush}"
+                        BorderThickness="{StaticResource BorderWidth}"
+                        CornerRadius="{StaticResource CornerRadiusMd}"
+                        RenderTransform="{TemplateBinding SlideTransform}">
+                        <DockPanel>
+                            <Border
+                                x:Name="AccentBar"
+                                Width="{StaticResource BorderWidthAccent}"
+                                Background="{DynamicResource AccentBrush}"
+                                CornerRadius="{StaticResource CornerRadiusAccentLeft}"
+                                DockPanel.Dock="Left" />
+                            <Button
+                                x:Name="CloseButton"
+                                Margin="{StaticResource NotificationCloseMargin}"
+                                AutomationProperties.Name="{x:Static res:Strings.Search_Close_Tooltip}"
+                                Command="{Binding TemplateButtonCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                DockPanel.Dock="Right"
+                                Style="{StaticResource ToolButtonSmallStyle}"
+                                Visibility="Collapsed">
+                                <ContentControl Style="{StaticResource IconSmallStyle}" Tag="{StaticResource IconCloseGeometry}" />
+                            </Button>
+                            <ContentPresenter
+                                Margin="{StaticResource NotificationPadding}"
+                                VerticalAlignment="Center"
+                                TextElement.FontSize="{StaticResource FontSizeBody}"
+                                TextElement.Foreground="{DynamicResource FgBrush}">
+                                <ContentPresenter.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextWrapping" Value="Wrap" />
+                                    </Style>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
+                        </DockPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Appearance" Value="Danger">
+                            <Setter TargetName="AccentBar" Property="Background" Value="{DynamicResource DangerBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsCloseButtonEnabled" Value="True">
+                            <Setter TargetName="CloseButton" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- C-19 dialog: DialogMaxWidth, DialogButtonPadding, focus kept inside (E-06); veil, body and footer brushes in Tokens.Light/Dark (ContentDialog*) -->
+    <Style x:Key="DialogStyle" BasedOn="{StaticResource {x:Type ui:ContentDialog}}" TargetType="ui:ContentDialog">
+        <Style.Resources>
+            <ResourceDictionary>
+                <!-- Three equal buttons in 440: padding DialogButtonPadding (specification C-19, 0 8) -->
+                <Style BasedOn="{StaticResource {x:Type ui:Button}}" TargetType="ui:Button">
+                    <Setter Property="Padding" Value="{StaticResource DialogButtonPadding}" />
+                    <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+                </Style>
+            </ResourceDictionary>
+        </Style.Resources>
+        <Setter Property="DialogMaxWidth" Value="{StaticResource DialogMaxWidth}" />
+        <Setter Property="KeyboardNavigation.TabNavigation" Value="Cycle" />
+        <Setter Property="FontFamily" Value="{StaticResource FontFamilyUi}" />
+    </Style>
+
+    <!-- Link dialog form: DialogFormMinWidth -->
+    <Style x:Key="DialogFormStyle" TargetType="StackPanel">
+        <Setter Property="MinWidth" Value="{StaticResource DialogFormMinWidth}" />
+    </Style>
+
+    <!-- Link dialog label: FontSizeBody, Fg2Brush, DialogLabelMargin -->
+    <Style x:Key="DialogLabelStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="{StaticResource DialogLabelMargin}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg2Brush}" />
+    </Style>
+
+    <!-- Link dialog field (C-08) -->
+    <Style x:Key="DialogTextBoxStyle" BasedOn="{StaticResource FieldTextBoxStyle}" TargetType="TextBox" />
+</ResourceDictionary>
