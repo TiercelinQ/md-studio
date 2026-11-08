@@ -1,6 +1,6 @@
-# MdReader - v1.1.0
+# MdStudio - v1.1.0
 
-Desktop Markdown reader and WYSIWYG editor for Windows. Open a `.md` / `.markdown` file or a whole folder, read it rendered (tables, code highlighting, task lists, Mermaid diagrams), find your way with tabs, an outline, in-document search and zoom, and correct it without writing Markdown syntax. Saving rewrites **only the blocks you changed**: everything else stays byte-for-byte identical.
+Desktop Markdown studio for Windows (formerly MdReader). Create a `.md` file or open one, or a whole folder, read it rendered (tables, code highlighting, task lists, Mermaid diagrams), find your way with tabs, an outline, in-document search and zoom, and edit it without writing Markdown syntax, or as raw Markdown in source mode. Saving rewrites **only the blocks you changed**: everything else stays byte-for-byte identical.
 
 Interface in French.
 
@@ -44,7 +44,7 @@ Interface in French.
 | HtmlSanitizer | 11.0.16 | Sanitizing raw HTML of documents |
 | xunit.v3, xunit.runner.visualstudio, Microsoft.NET.Test.Sdk, NSubstitute | 4.0.2, 4.0.1, 18.11.0, 6.2.0 | Tests |
 
-### Embedded JavaScript (`src/MdReader/Web/vendor`, no CDN)
+### Embedded JavaScript (`src/MdStudio/Web/vendor`, no CDN)
 
 mermaid 12.3.0, highlight.js 11.12.0 (`@highlightjs/cdn-assets` build), turndown 7.2.5, turndown-plugin-gfm 1.0.2.
 
@@ -60,34 +60,34 @@ From the repository root:
 
 ```
 dotnet restore
-dotnet build MdReader.sln -c Debug
-dotnet run --project src/MdReader
-dotnet run --project src/MdReader -- "C:\path\to\file.md"
-dotnet format MdReader.sln --verify-no-changes
-dotnet test --solution MdReader.sln
+dotnet build MdStudio.sln -c Debug
+dotnet run --project src/MdStudio
+dotnet run --project src/MdStudio -- "C:\path\to\file.md"
+dotnet format MdStudio.sln --verify-no-changes
+dotnet test --solution MdStudio.sln
 dotnet list package --vulnerable --include-transitive
 ```
 
 `global.json` switches `dotnet test` to Microsoft.Testing.Platform, which xUnit v3 4.x requires on the .NET 10 SDK; hence `--solution`.
 
-Debug logging: set the environment variable `MDREADER_DEBUG=1` before launching.
+Debug logging: set the environment variable `MDSTUDIO_DEBUG=1` before launching.
 
 ## Publish (portable executable)
 
 Close the application first (a running instance locks its own executable), then:
 
 ```
-dotnet publish src/MdReader -c Release -p:PublishProfile=win-x64
+dotnet publish src/MdStudio -c Release -p:PublishProfile=win-x64
 ```
 
-Output: `publish/win-x64/MdReader.exe`, a single self-contained file (about 100 MB, no .NET runtime to install). Copy it anywhere and run it.
+Output: `publish/win-x64/MdStudio.exe`, a single self-contained file (about 100 MB, no .NET runtime to install). Copy it anywhere and run it.
 
 - **SmartScreen**: the executable is not signed. On first launch of a downloaded copy, Windows SmartScreen shows a warning; choose "More info" then "Run anyway".
-- **Open `.md` files with MdReader**: right-click a `.md` file, "Open with", "Choose another app", browse to `MdReader.exe`.
+- **Open `.md` files with MdStudio**: right-click a `.md` file, "Open with", "Choose another app", browse to `MdStudio.exe`.
 
 ## Data
 
-Everything lives under `%APPDATA%\MdReader`:
+Everything lives under `%APPDATA%\MdStudio`:
 
 | Path | Content |
 | --- | --- |
@@ -95,15 +95,15 @@ Everything lives under `%APPDATA%\MdReader`:
 | `logs\app-*.log` | Daily log files, 1 MB each, 7 kept |
 | `WebView2\` | WebView2 profile |
 
-This folder is shared with the previous Markdown reader of the same name: MdReader replaces it and takes over its theme, zoom, explorer width and last folder.
+On first launch, MdStudio copies `preferences.json` from `%APPDATA%\MdReader` (the application's former name, and the earlier reader it replaced), so the theme, zoom, panes, last folder and window placement carry over. That folder is left untouched; logs and the WebView2 profile start fresh.
 
 ## Project structure
 
 ```
-md-reader/
-├── MdReader.sln · Directory.Build.props · Directory.Packages.props · global.json · .editorconfig
+md-studio/
+├── MdStudio.sln · Directory.Build.props · Directory.Packages.props · global.json · .editorconfig
 ├── docs/release/CHANGELOG.md
-├── src/MdReader/
+├── src/MdStudio/
 │   ├── Assets/                icon.ico (executable, window, taskbar), rendered from the title bar drawing
 │   ├── App.xaml(.cs)          composition root: logging, global handlers, single instance, theme, window
 │   ├── AppConfig.cs           shared constants
@@ -115,7 +115,7 @@ md-reader/
 │   ├── Themes/                Tokens(.Light/.Dark).xaml, Icons.xaml, Styles.xaml
 │   ├── Web/                   host.html, doc.html, doc.css, page.js, editor.js, vendor/
 │   └── Properties/PublishProfiles/win-x64.pubxml
-├── tests/MdReader.Tests/      Services/, ViewModels/, Helpers/, Converters/
+├── tests/MdStudio.Tests/      Services/, ViewModels/, Helpers/, Converters/
 └── tools/stop-format.ps1      Claude Code Stop hook guard
 ```
 
@@ -132,7 +132,7 @@ md-reader/
 | Format (17 commands), link, image | `IDocumentSurface.ApplyFormat`, `IDialogService` | Link dialog validates the address |
 | Search, outline navigation | `IDocumentSurface` | Literal, case-insensitive search |
 | Web link | `IExternalLauncher` | Absolute `http` / `https` only |
-| Page resources | `IPageAssetProvider` | Embedded page files and document images on `https://mdreader.local/` |
+| Page resources | `IPageAssetProvider` | Embedded page files and document images on `https://mdstudio.local/` |
 
 ## How saving keeps your file intact
 

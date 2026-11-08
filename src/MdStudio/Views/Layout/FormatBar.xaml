@@ -1,0 +1,75 @@
+<UserControl
+    x:Class="MdStudio.Views.Layout.FormatBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:res="clr-namespace:MdStudio.Resources"
+    xmlns:models="clr-namespace:MdStudio.Models">
+    <!-- Zone C: formatting bar (specification 4.9.1), four groups, C-04 tool buttons and C-05 style list -->
+    <Border AutomationProperties.Name="{x:Static res:Strings.Format_Bar_Name}" Style="{StaticResource FormatBarStyle}">
+        <ScrollViewer Style="{StaticResource HorizontalBarScrollStyle}">
+            <StackPanel Orientation="Horizontal">
+                <Button AutomationProperties.Name="{x:Static res:Strings.Format_Undo}" Command="{Binding FormatCommand}" CommandParameter="{x:Static models:FormatAction.Undo}" Style="{StaticResource ToolButtonStyle}" ToolTip="{x:Static res:Strings.Format_Undo_Tooltip}">
+                    <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconUndoGeometry}" />
+                </Button>
+                <Button AutomationProperties.Name="{x:Static res:Strings.Format_Redo}" Command="{Binding FormatCommand}" CommandParameter="{x:Static models:FormatAction.Redo}" Style="{StaticResource ToolButtonStyle}" ToolTip="{x:Static res:Strings.Format_Redo_Tooltip}">
+                    <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconRedoGeometry}" />
+                </Button>
+                <Separator Style="{StaticResource FormatSeparatorStyle}" />
+
+                <ComboBox AutomationProperties.Name="{x:Static res:Strings.Format_Style_Name}" SelectedIndex="{Binding SelectedBlockStyle, Mode=TwoWay}" Style="{StaticResource ParagraphStyleComboStyle}">
+                    <ComboBoxItem Content="{x:Static res:Strings.Style_Paragraph}" />
+                    <ComboBoxItem Content="{x:Static res:Strings.Style_Heading1}" />
+                    <ComboBoxItem Content="{x:Static res:Strings.Style_Heading2}" />
+                    <ComboBoxItem Content="{x:Static res:Strings.Style_Heading3}" />
+                    <ComboBoxItem Content="{x:Static res:Strings.Style_Quote}" />
+                </ComboBox>
+                <ToggleButton AutomationProperties.Name="{x:Static res:Strings.Format_Bold}" IsChecked="{Binding BoldToggle, Mode=TwoWay}" Style="{StaticResource ToolToggleButtonStyle}" ToolTip="{x:Static res:Strings.Format_Bold_Tooltip}">
+                    <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconBoldGeometry}" />
+                </ToggleButton>
+                <ToggleButton AutomationProperties.Name="{x:Static res:Strings.Format_Italic}" IsChecked="{Binding ItalicToggle, Mode=TwoWay}" Style="{StaticResource ToolToggleButtonStyle}" ToolTip="{x:Static res:Strings.Format_Italic_Tooltip}">
+                    <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconItalicGeometry}" />
+                </ToggleButton>
+                <ToggleButton AutomationProperties.Name="{x:Static res:Strings.Format_Strike}" IsChecked="{Binding StrikeToggle, Mode=TwoWay}" Style="{StaticResource ToolToggleButtonStyle}" ToolTip="{x:Static res:Strings.Format_Strike}">
+                    <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconStrikeGeometry}" />
+                </ToggleButton>
+                <Button AutomationProperties.Name="{x:Static res:Strings.Format_InlineCode}" Command="{Binding FormatCommand}" CommandParameter="{x:Static models:FormatAction.InlineCode}" Style="{StaticResource ToolButtonStyle}" ToolTip="{x:Static res:Strings.Format_InlineCode}">
+                    <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconCodeGeometry}" />
+                </Button>
+                <Separator Style="{StaticResource FormatSeparatorStyle}" />
+
+                <ToggleButton AutomationProperties.Name="{x:Static res:Strings.Format_BulletList}" IsChecked="{Binding BulletListToggle, Mode=TwoWay}" Style="{StaticResource ToolToggleButtonStyle}" ToolTip="{x:Static res:Strings.Format_BulletList}">
+                    <ContentControl Style="{StaticResource IconBulletsStyle}" Tag="{StaticResource IconBulletListGeometry}" />
+                </ToggleButton>
+                <ToggleButton AutomationProperties.Name="{x:Static res:Strings.Format_NumberedList}" IsChecked="{Binding NumberedListToggle, Mode=TwoWay}" Style="{StaticResource ToolToggleButtonStyle}" ToolTip="{x:Static res:Strings.Format_NumberedList}">
+                    <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconNumberedListGeometry}" />
+                </ToggleButton>
+                <Button AutomationProperties.Name="{x:Static res:Strings.Format_TaskList}" Command="{Binding FormatCommand}" CommandParameter="{x:Static models:FormatAction.TaskList}" Style="{StaticResource ToolButtonStyle}" ToolTip="{x:Static res:Strings.Format_TaskList}">
+                    <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconTasksGeometry}" />
+                </Button>
+                <Button AutomationProperties.Name="{x:Static res:Strings.Format_Quote}" Command="{Binding FormatCommand}" CommandParameter="{x:Static models:FormatAction.Quote}" Style="{StaticResource ToolButtonStyle}" ToolTip="{x:Static res:Strings.Format_Quote}">
+                    <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconQuoteGeometry}" />
+                </Button>
+                <Separator Style="{StaticResource FormatSeparatorStyle}" />
+
+                <Button AutomationProperties.Name="{x:Static res:Strings.Format_Link}" Command="{Binding FormatCommand}" CommandParameter="{x:Static models:FormatAction.Link}" Style="{StaticResource ToolButtonStyle}" ToolTip="{x:Static res:Strings.Format_Link_Tooltip}">
+                    <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconLinkGeometry}" />
+                </Button>
+                <Button AutomationProperties.Name="{x:Static res:Strings.Format_Image}" Command="{Binding FormatCommand}" CommandParameter="{x:Static models:FormatAction.Image}" Style="{StaticResource ToolButtonStyle}" ToolTip="{x:Static res:Strings.Format_Image}">
+                    <ContentControl Style="{StaticResource IconImageStyle}" Tag="{StaticResource IconImageGeometry}" />
+                </Button>
+                <Button AutomationProperties.Name="{x:Static res:Strings.Format_Table}" Command="{Binding FormatCommand}" CommandParameter="{x:Static models:FormatAction.Table}" Style="{StaticResource ToolButtonStyle}" ToolTip="{x:Static res:Strings.Format_Table}">
+                    <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconTableGeometry}" />
+                </Button>
+                <Button AutomationProperties.Name="{x:Static res:Strings.Format_CodeBlock}" Command="{Binding FormatCommand}" CommandParameter="{x:Static models:FormatAction.CodeBlock}" Style="{StaticResource ToolButtonStyle}" ToolTip="{x:Static res:Strings.Format_CodeBlock}">
+                    <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconCodeBlockGeometry}" />
+                </Button>
+                <Button AutomationProperties.Name="{x:Static res:Strings.Format_Mermaid}" Command="{Binding FormatCommand}" CommandParameter="{x:Static models:FormatAction.Mermaid}" Style="{StaticResource ToolButtonStyle}" ToolTip="{x:Static res:Strings.Format_Mermaid}">
+                    <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconDiagramGeometry}" />
+                </Button>
+                <Button AutomationProperties.Name="{x:Static res:Strings.Format_HorizontalRule}" Command="{Binding FormatCommand}" CommandParameter="{x:Static models:FormatAction.HorizontalRule}" Style="{StaticResource ToolButtonStyle}" ToolTip="{x:Static res:Strings.Format_HorizontalRule}">
+                    <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconHorizontalRuleGeometry}" />
+                </Button>
+            </StackPanel>
+        </ScrollViewer>
+    </Border>
+</UserControl>

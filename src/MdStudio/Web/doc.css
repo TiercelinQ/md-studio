@@ -1,0 +1,132 @@
+/* ============================================================
+   doc.css - MdStudio v1.0.0
+   Document typography (specification 5.4) and page components C-16, C-20, C-21, C-23.
+   Colors are the CSS variables sent by the application (DS-03); the values below
+   are the light theme, replaced at load.
+   ============================================================ */
+:root {
+    --doc: #ffffff; --fg: #1a1c1f; --fg2: #4b5058; --fg3: #5f6570;
+    --stroke: #e0e2e6; --stroke2: #c9ccd2; --hover: rgba(20,30,45,.06);
+    --accent: #0067c0; --on-accent: #ffffff; --accent-soft: rgba(0,103,192,.10);
+    --code-bg: #f3f4f6; --syn-k: #0b5cad; --syn-s: #0f7b3f; --syn-c: #6a707a;
+    --mark: #fff0a0; --mark-cur: #ffb454; --mark-fg: #1a1c1f; --danger: #c42b1c;
+    --zoom: 1;
+    --font-ui: "Segoe UI Variable Text", "Segoe UI", sans-serif;
+    --font-mono: "Cascadia Mono", Consolas, monospace;
+    color-scheme: light;
+}
+:root.dark { color-scheme: dark; }
+
+html { background: var(--doc); }
+body { margin: 0; background: var(--doc); color: var(--fg); font-family: var(--font-ui); }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: auto; } }
+
+/* Column: full width of zone F (deviation E-22), following the panes and the window, and at least the
+   visible height, so a click anywhere below a short (or new, empty) document lands in it;
+   padding 28 / 40 / 72 (narrow: 20 / 16 / 56) */
+.doc {
+    min-height: 100vh; padding: 28px 40px 72px; box-sizing: border-box;
+    font-size: calc(15px * var(--zoom)); line-height: 1.65; overflow-wrap: anywhere; outline: none;
+}
+@media (max-width: 640px) { .doc { padding: 20px 16px 56px; } }
+
+/* Source mode: raw Markdown in a textarea, same padding as the document column. The highlight layer
+   below it shares every metric, so its marks sit exactly under the matching characters. */
+.source-box { display: none; position: relative; background: var(--doc); }
+body.source-mode .doc { display: none; }
+body.source-mode .source-box { display: block; }
+.source {
+    display: block; width: 100%; margin: 0; padding: 28px 40px 72px; border: 0; box-sizing: border-box;
+    font-family: var(--font-mono); font-size: calc(13.5px * var(--zoom)); line-height: 1.6; tab-size: 4;
+    white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; letter-spacing: normal;
+}
+@media (max-width: 640px) { .source { padding: 20px 16px 56px; } }
+.source-hits { position: absolute; inset: 0; overflow: hidden; color: transparent; pointer-events: none; }
+.source-input {
+    position: relative; min-height: 100vh; overflow: hidden; resize: none; outline: none;
+    color: var(--fg); caret-color: var(--fg); background: transparent;
+}
+.doc > .mdb-hidden { display: none; }
+
+.doc p { margin: .8em 0; }
+.doc h1, .doc h2, .doc h3, .doc h4, .doc h5, .doc h6 { font-weight: 600; color: var(--fg); }
+.doc h1 { font-size: 1.9em; line-height: 1.2; margin: 0 0 .5em; letter-spacing: -.01em; }
+.doc h2 { font-size: 1.4em; line-height: 1.3; margin: 1.8em 0 .5em; padding-bottom: .3em; border-bottom: 1px solid var(--stroke); }
+.doc h3 { font-size: 1.15em; line-height: 1.35; margin: 1.5em 0 .4em; }
+.doc h4, .doc h5, .doc h6 { line-height: 1.4; margin: 1.3em 0 .4em; }
+.doc h4 { font-size: 1em; }
+.doc h5 { font-size: .95em; }
+.doc h6 { font-size: .9em; color: var(--fg2); }
+.doc > .mdb:first-child > h1:first-child { margin-top: 0; }
+
+.doc ul, .doc ol { margin: .8em 0; padding-left: 1.5em; }
+.doc li { margin: .25em 0; }
+.doc li > p { margin: .25em 0; }
+.doc ul.contains-task-list { list-style: none; padding-left: .2em; }
+.doc .task-list-item input[type="checkbox"] { accent-color: var(--accent); margin: 0 .6em 0 0; vertical-align: baseline; }
+
+.doc a { color: var(--accent); text-decoration: none; cursor: pointer; }
+.doc a:hover { text-decoration: underline; }
+
+.doc code { font-family: var(--font-mono); font-size: .88em; padding: .15em .4em; border-radius: 4px; background: var(--code-bg); }
+.doc pre {
+    margin: 1em 0; padding: 12px 14px; font-size: .85em; line-height: 1.5; overflow-x: auto;
+    border: 1px solid var(--stroke); border-radius: 6px; background: var(--code-bg);
+}
+.doc pre code { padding: 0; font-size: 1em; background: none; border-radius: 0; }
+.hljs-keyword, .hljs-built_in, .hljs-type, .hljs-literal, .hljs-attr, .hljs-name, .hljs-selector-tag, .hljs-variable, .hljs-property { color: var(--syn-k); }
+.hljs-string, .hljs-regexp, .hljs-symbol, .hljs-template-string, .hljs-addition { color: var(--syn-s); }
+.hljs-comment, .hljs-quote, .hljs-meta { color: var(--syn-c); }
+
+.doc table { width: 100%; margin: 1em 0; border-collapse: collapse; font-size: .95em; display: block; overflow-x: auto; }
+.doc th, .doc td { padding: .5em .8em; border: 1px solid var(--stroke); text-align: left; vertical-align: top; }
+.doc th { background: var(--hover); font-weight: 600; }
+
+.doc blockquote {
+    margin: 1.1em 0; padding: .6em 1em; border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0; background: var(--accent-soft); color: var(--fg);
+}
+.doc blockquote p { margin: .2em 0; }
+
+.doc hr { margin: 2em 0; border: 0; border-top: 1px solid var(--stroke); }
+.doc img { display: block; max-width: 100%; margin: 1em 0; border-radius: 6px; }
+.doc .img-missing { display: block; margin: 1em 0; color: var(--fg3); font-style: italic; }
+
+/* C-21 search highlight */
+mark.mdr-hit { background: var(--mark); color: var(--mark-fg); border-radius: 2px; }
+mark.mdr-hit.mdr-cur { background: var(--mark-cur); }
+.source-hits mark.mdr-hit { color: transparent; }
+
+/* C-20 Mermaid frame */
+.mermaid-frame {
+    margin: 1.2em 0; padding: 14px; border: 1px solid var(--stroke); border-radius: 8px;
+    background: var(--doc); overflow-x: auto; font-size: 15px; line-height: 1.4;
+}
+.mermaid-view { display: flex; flex-direction: column; align-items: center; }
+.mermaid-view svg { max-width: none; height: auto; }
+.mermaid-bar { display: none; align-items: center; gap: 8px; margin: -4px 0 10px; font-size: 12px; color: var(--fg3); }
+.mermaid-bar .spacer { flex: 1; }
+.mermaid-chip { padding: 2px 9px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.mermaid-editor { margin-top: 10px; }
+.mermaid-editor textarea {
+    display: block; width: 100%; min-height: 150px; box-sizing: border-box; resize: vertical;
+    padding: 8px 10px; border: 1px solid var(--stroke2); border-radius: 6px; background: var(--code-bg); color: var(--fg);
+    font-family: var(--font-mono); font-size: 12.5px; line-height: 1.5;
+}
+.mermaid-actions { display: flex; gap: 6px; margin-top: 8px; }
+.mermaid-pending { padding: 28px 12px; border: 1px dashed var(--stroke2); border-radius: 6px; color: var(--fg3); text-align: center; font-size: 12.5px; }
+.mermaid-error { color: var(--danger); font-size: 12.5px; margin-bottom: 8px; }
+.mermaid-view pre { margin: 0; width: 100%; }
+body.editing .mermaid-frame { border-style: dashed; border-color: var(--accent); }
+body.editing .mermaid-bar { display: flex; }
+
+/* C-16 mini button */
+.mini {
+    height: 26px; padding: 0 10px; border: 1px solid var(--stroke2); border-radius: 4px;
+    background: var(--doc); color: var(--fg); font: 12px var(--font-ui); cursor: default;
+}
+.mini:hover { background: var(--hover); }
+.mini.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.mini:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+::selection { background: var(--accent-soft); }

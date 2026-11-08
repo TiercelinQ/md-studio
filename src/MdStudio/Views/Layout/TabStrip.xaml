@@ -1,0 +1,22 @@
+<UserControl
+    x:Class="MdStudio.Views.Layout.TabStrip"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:res="clr-namespace:MdStudio.Resources">
+    <!-- Zone A: application icon, document tabs (C-06), "new tab" button inside the tab strip template -->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <ContentControl Style="{StaticResource AppIconStyle}" />
+        <TabControl
+            x:Name="DocumentTabs"
+            Grid.Column="1"
+            AutomationProperties.Name="{x:Static res:Strings.Tabs_Name}"
+            ItemContainerStyle="{StaticResource DocumentTabItemStyle}"
+            ItemsSource="{Binding Documents}"
+            SelectedItem="{Binding ActiveDocument}"
+            Style="{StaticResource DocumentTabsStyle}" />
+    </Grid>
+</UserControl>
