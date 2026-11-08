@@ -172,7 +172,12 @@
     <Thickness x:Key="DialogLabelMargin">0,0,0,6</Thickness>
     <Thickness x:Key="DialogButtonPadding">2,5,2,6</Thickness>
     <Thickness x:Key="FocusRingMargin">-1</Thickness>
+    <Thickness x:Key="LoadingTextMargin">0,12,0,0</Thickness>
     <Thickness x:Key="Zero">0</Thickness>
+
+    <!-- LOADING SCREEN: ring size, delay before showing it (no flash on fast openings) -->
+    <sys:Double x:Key="LoadingRingSize">32</sys:Double>
+    <sys:TimeSpan x:Key="LoadingRevealDelay">0:0:0.15</sys:TimeSpan>
 
     <!-- OPACITY -->
     <sys:Double x:Key="OpacityDisabled">0.4</sys:Double>

@@ -2,7 +2,7 @@
    page.js - MdReader v1.0.0
    Two roles, chosen by context:
    - container page (host.html): one iframe per tab, routes the messages of the application;
-   - document page (doc.html, in an iframe): rendering, links, outline, search, zoom, theme.
+   - document page (doc.html, in an iframe): rendering, source zone, links, outline, search, zoom, theme.
    Editing lives in editor.js. No network access: every resource comes from the virtual host.
    ============================================================ */
 (function () {
@@ -20,6 +20,10 @@
 
         window.mdrHost = {
             send(tab, message) {
+                if (message.type === 'rendered') {
+                    frames.get(tab)?.classList.add('rendered');
+                }
+
                 message.tab = tab;
                 window.chrome.webview.postMessage(message);
             },
@@ -68,6 +72,24 @@
     let doc = null;
 
     const send = (message) => window.parent.mdrHost.send(tab, message);
+
+    /**
+     * Source mode: a textarea (exact text, native undo) over a layer laid out identically that carries
+     * the search highlights. Resolved on use: this script runs before the body exists.
+     */
+    const source = () => document.getElementById('source');
+    const sourceHits = () => document.getElementById('source-hits');
+    const sourceText = () => source().value;
+
+    /** Grows the textarea to its content, so the page scrolls as in the other modes. */
+    function fitSource() {
+        const area = source();
+        area.style.height = 'auto';
+        area.style.height = area.scrollHeight + 'px';
+    }
+
+    /** Zone searched in the current mode: the highlight layer in source mode, the rendering otherwise. */
+    const activeZone = () => (state.mode === 'Source' ? sourceHits() : doc);
     const behavior = () => (reducedMotion.matches ? 'auto' : 'smooth');
 
     /** Runs DOM changes that must not mark the document modified (highlighting, rendering). */
@@ -85,6 +107,7 @@
 
     function applyZoom(zoom) {
         document.documentElement.style.setProperty('--zoom', String(zoom || 1));
+        if (state.mode === 'Source') { fitSource(); }
     }
 
     // ------------------------------------------------------------ Mermaid (loaded on demand)
@@ -216,13 +239,36 @@
         renderAllFrames();
         send({ type: 'stats', outline: outline(), words: wordCount() });
         updateCurrentHeading();
+        send({ type: 'rendered' });
     }
 
     function setMode(mode) {
-        state.mode = mode || 'Reading';
         clearSearch();
+        state.mode = mode || 'Reading';
+        document.body.classList.toggle('source-mode', state.mode === 'Source');
         window.mdrEditor?.setEditing(state.mode === 'Editing');
     }
+
+    function showSource(text) {
+        const area = source();
+        area.value = text || '';
+        // A new value leaves the caret at the end, and focusing would scroll the page down to it.
+        area.setSelectionRange(0, 0);
+        setMode('Source');
+        fitSource();
+        window.scrollTo(0, 0);
+    }
+
+    document.addEventListener('input', (event) => {
+        if (event.target.id !== 'source') { return; }
+        fitSource();
+        // Typing moves the text away from its highlights: they are removed, the counter is emptied.
+        if (state.hits.length > 0) {
+            clearSearch();
+            send({ type: 'searchResult' });
+        }
+    });
+    window.addEventListener('resize', () => { if (state.mode === 'Source') { fitSource(); } });
 
     // ------------------------------------------------------------ outline and statistics
     function outline() {
@@ -245,7 +291,7 @@
     }
 
     function updateCurrentHeading() {
-        if (!doc) { return; }
+        if (!doc || state.mode === 'Source') { return; }
         let current = null;
         for (const heading of doc.querySelectorAll('h1, h2, h3')) {
             if (isInFrame(heading)) { continue; }
@@ -285,7 +331,7 @@
     function clearSearch() {
         if (!doc || state.hits.length === 0) { state.hits = []; state.current = -1; return; }
         untracked(() => {
-            for (const mark of doc.querySelectorAll('mark.mdr-hit')) {
+            for (const mark of activeZone().querySelectorAll('mark.mdr-hit')) {
                 const parent = mark.parentNode;
                 mark.replaceWith(...mark.childNodes);
                 parent.normalize();
@@ -297,9 +343,13 @@
 
     function search(query) {
         clearSearch();
+        if (state.mode === 'Source') {
+            sourceHits().textContent = sourceText();
+        }
+
         const needle = query.toLocaleLowerCase('fr');
         const nodes = [];
-        const walker = document.createTreeWalker(doc, NodeFilter.SHOW_TEXT, {
+        const walker = document.createTreeWalker(activeZone(), NodeFilter.SHOW_TEXT, {
             acceptNode: (node) => (isInFrame(node) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT),
         });
         while (walker.nextNode()) { nodes.push(walker.currentNode); }
@@ -383,6 +433,7 @@
             switch (message.type) {
                 case 'load': load(message); break;
                 case 'setMode': setMode(message.mode); break;
+                case 'showSource': showSource(message.source); break;
                 case 'setZoom': applyZoom(message.zoom); break;
                 case 'setTheme': applyTheme(message.dark, message.variables); if (doc) { renderAllFrames(); } break;
                 case 'format': window.mdrEditor?.format(message.action, message.argument, message.extra); break;
@@ -391,11 +442,13 @@
                 case 'searchClear': clearSearch(); break;
                 case 'scrollTo': scrollToAnchor(message.anchor); break;
                 case 'serialize': send({ type: 'serialized', requestId: message.requestId, blocks: window.mdrEditor.serialize() }); break;
-                case 'focus': window.focus(); doc?.focus(); break;
+                case 'getSource': send({ type: 'serialized', requestId: message.requestId, source: sourceText() }); break;
+                case 'focus': window.focus(); (state.mode === 'Source' ? source() : doc)?.focus(); break;
                 default: break;
             }
         },
         send: send,
+        sourceText: sourceText,
         buildFrame: buildFrame,
         renderFrame: renderFrame,
         stats: () => ({ outline: outline(), words: wordCount() }),

@@ -1217,6 +1217,54 @@
         </Style.Triggers>
     </Style>
 
+    <!-- Loading screen of the active document: DocBrush at once (the empty page behind is white), while the page renders -->
+    <Style x:Key="LoadingStateStyle" TargetType="Grid">
+        <Setter Property="Background" Value="{DynamicResource DocBrush}" />
+        <Setter Property="Visibility" Value="Collapsed" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ActiveDocument.IsLoading}" Value="True">
+                <Setter Property="Visibility" Value="Visible" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Loading content: centered, shown after LoadingRevealDelay so a fast opening does not flash the ring -->
+    <Style x:Key="LoadingContentStyle" TargetType="StackPanel">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Opacity" Value="0" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ActiveDocument.IsLoading}" Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard x:Name="RevealLoading">
+                        <Storyboard>
+                            <DoubleAnimation BeginTime="{StaticResource LoadingRevealDelay}" Storyboard.TargetProperty="Opacity" To="1" Duration="0" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+                <DataTrigger.ExitActions>
+                    <RemoveStoryboard BeginStoryboardName="RevealLoading" />
+                </DataTrigger.ExitActions>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Loading ring: LoadingRingSize, AccentBrush, indeterminate -->
+    <Style x:Key="LoadingRingStyle" BasedOn="{StaticResource {x:Type ui:ProgressRing}}" TargetType="ui:ProgressRing">
+        <Setter Property="Width" Value="{StaticResource LoadingRingSize}" />
+        <Setter Property="Height" Value="{StaticResource LoadingRingSize}" />
+        <Setter Property="IsIndeterminate" Value="True" />
+        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+    </Style>
+
+    <!-- Loading text: FontSizeBody, Fg2Brush, LoadingTextMargin -->
+    <Style x:Key="LoadingTextStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="{StaticResource LoadingTextMargin}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg2Brush}" />
+        <Setter Property="TextAlignment" Value="Center" />
+    </Style>
+
     <!-- C-25 empty state area: DocBrush -->
     <Style x:Key="EmptyStateAreaStyle" TargetType="Grid">
         <Setter Property="Background" Value="{DynamicResource DocBrush}" />

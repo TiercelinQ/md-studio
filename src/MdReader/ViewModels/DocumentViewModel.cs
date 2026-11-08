@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -37,8 +38,14 @@ public sealed partial class DocumentViewModel(
     [LoggerMessage(Level = LogLevel.Information, Message = "Lien local non Markdown ignore {Target}")]
     private static partial void LogLocalLinkIgnored(ILogger logger, string target);
 
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Page du document {Name} affichee en {ElapsedMs} ms")]
+    private static partial void LogPageShown(ILogger logger, string name, double elapsedMs);
+
     private const int MinSearchLength = 2;
 
+    private readonly TaskCompletionSource _content = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private long _loadStarted;
+    private Task _modeTransition = Task.CompletedTask;
     private string _baseText = string.Empty;
     private RenderedDocument _rendered = new(string.Empty, string.Empty, []);
     private DocumentPageState? _state;
@@ -100,6 +107,10 @@ public sealed partial class DocumentViewModel(
     [ObservableProperty]
     public partial bool IsModified { get; private set; }
 
+    /// <summary>Gets a value indicating whether the page is rendering the document (loading screen).</summary>
+    [ObservableProperty]
+    public partial bool IsLoading { get; private set; }
+
     /// <summary>Gets the word count.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(WordCountText))]
@@ -155,19 +166,30 @@ public sealed partial class DocumentViewModel(
         _ => 0,
     };
 
-    /// <summary>Initializes the document with a file read from disk.</summary>
-    /// <param name="file">The file.</param>
-    /// <param name="rendered">Its rendering.</param>
+    /// <summary>Prepares the tab of a file still being read: name, path and loading screen.</summary>
+    /// <param name="path">Absolute path.</param>
     /// <param name="state">Window-wide page settings.</param>
     /// <param name="root">Opened folder, used for the relative path and the breadcrumb.</param>
-    public void Initialize(TextFile file, RenderedDocument rendered, DocumentPageState state, string? root)
+    public void Prepare(string path, DocumentPageState state, string? root)
     {
-        FilePath = file.Path;
-        FileName = Path.GetFileName(file.Path);
+        FilePath = path;
+        FileName = Path.GetFileName(path);
         _state = state;
-        Accept(file, rendered);
         UpdateRoot(root);
+        StartLoading();
     }
+
+    /// <summary>Provides the read and rendered file; the page loads it once attached.</summary>
+    /// <param name="file">The file.</param>
+    /// <param name="rendered">Its rendering.</param>
+    public void Show(TextFile file, RenderedDocument rendered)
+    {
+        Accept(file, rendered);
+        _content.TrySetResult();
+    }
+
+    /// <summary>Gives up a file that could not be read: a pending page attachment is cancelled.</summary>
+    public void Abandon() => _content.TrySetCanceled();
 
     /// <summary>Updates the relative path and the breadcrumb for a new opened folder.</summary>
     /// <param name="root">Opened folder, or null.</param>
@@ -180,26 +202,38 @@ public sealed partial class DocumentViewModel(
         Breadcrumb = relative.Split('\\')[..^1];
     }
 
-    /// <summary>Attaches the page of the tab and loads the document into it.</summary>
+    /// <summary>
+    /// Attaches the page of the tab once the file is read, then loads the document into it. Mode changes
+    /// made meanwhile only update the settings the page loads with.
+    /// </summary>
     /// <param name="surface">Page of the tab.</param>
     /// <param name="ct">Cancellation token.</param>
-    /// <returns>A task completed when the document is sent to the page.</returns>
+    /// <returns>A task completed when the document is sent to the page; cancelled when the file is abandoned.</returns>
     public async Task AttachSurfaceAsync(IDocumentSurface surface, CancellationToken ct)
     {
+        await _content.Task.WaitAsync(ct);
         Surface = surface;
         if (_state is not null)
         {
             await surface.LoadAsync(_rendered.Html, _state, ct);
+            if (_state.Mode == DocumentMode.Source)
+            {
+                surface.ShowSource(_baseText);
+            }
         }
     }
 
-    /// <summary>Applies the window mode.</summary>
+    /// <summary>
+    /// Applies the window mode. Transitions run one after the other: entering the source mode sends the
+    /// recomposed text to the page, leaving it renders the typed text again when it changed.
+    /// </summary>
     /// <param name="mode">New mode.</param>
-    public void ApplyMode(DocumentMode mode)
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>A task completed when the page shows the new mode.</returns>
+    public Task ApplyModeAsync(DocumentMode mode, CancellationToken ct)
     {
-        _state = _state is null ? null : _state with { Mode = mode };
-        CloseSearch();
-        Surface?.SetMode(mode);
+        _modeTransition = TransitionAfterAsync(_modeTransition, mode, ct);
+        return _modeTransition;
     }
 
     /// <summary>Applies the zoom factor.</summary>
@@ -242,6 +276,18 @@ public sealed partial class DocumentViewModel(
             case "stats":
                 UpdateStats(message);
                 break;
+            case "sourceChanged":
+                IsModified = !string.Equals(LineEndings.Normalize(message.Source ?? string.Empty, Format.LineEnding), SavedText, StringComparison.Ordinal);
+                break;
+            case "rendered":
+                IsLoading = false;
+                if (logger.IsEnabled(LogLevel.Debug))
+                {
+                    var elapsedMs = Stopwatch.GetElapsedTime(_loadStarted).TotalMilliseconds;
+                    LogPageShown(logger, FileName, elapsedMs);
+                }
+
+                break;
             case "currentHeading":
                 CurrentAnchor = message.Heading;
                 break;
@@ -281,7 +327,11 @@ public sealed partial class DocumentViewModel(
             return false;
         }
 
-        var text = Compose(await Surface.SerializeAsync(ct));
+        // A mode change in progress decides which zone of the page holds the text.
+        await _modeTransition.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+        var text = _state?.Mode == DocumentMode.Source
+            ? LineEndings.Normalize(await Surface.GetSourceAsync(ct), Format.LineEnding)
+            : Compose(await Surface.SerializeAsync(ct));
         var result = await files.WriteAsync(FilePath, text, Format, ct);
         if (!result.Ok)
         {
@@ -384,8 +434,59 @@ public sealed partial class DocumentViewModel(
         IsDiskDeleted = false;
         if (Surface is not null && _state is not null)
         {
+            StartLoading();
             await Surface.LoadAsync(rendered.Html, _state, ct);
+            if (_state.Mode == DocumentMode.Source)
+            {
+                Surface.ShowSource(_baseText);
+            }
         }
+    }
+
+    private async Task TransitionAfterAsync(Task previous, DocumentMode mode, CancellationToken ct)
+    {
+        // A failed or cancelled transition was already reported to its own caller.
+        await previous.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+        var leaving = _state?.Mode;
+        _state = _state is null ? null : _state with { Mode = mode };
+        CloseSearch();
+        if (Surface is not { } surface)
+        {
+            return;
+        }
+
+        if (mode == DocumentMode.Source)
+        {
+            if (leaving != DocumentMode.Source)
+            {
+                surface.ShowSource(Compose(await surface.SerializeAsync(ct)));
+            }
+
+            return;
+        }
+
+        if (leaving == DocumentMode.Source && _state is not null)
+        {
+            var text = LineEndings.Normalize(await surface.GetSourceAsync(ct), Format.LineEnding);
+            if (!string.Equals(text, _baseText, StringComparison.Ordinal))
+            {
+                // The typed text becomes the base of the block recomposition; the saved text is unchanged.
+                var rendered = await renderer.RenderAsync(new TextFile(FilePath, text, Format, _diskWriteUtc, _diskLength), ct);
+                _baseText = text;
+                _rendered = rendered;
+                StartLoading();
+                await surface.LoadAsync(rendered.Html, _state, ct);
+                return;
+            }
+        }
+
+        surface.SetMode(mode);
+    }
+
+    private void StartLoading()
+    {
+        IsLoading = true;
+        _loadStarted = Stopwatch.GetTimestamp();
     }
 
     [RelayCommand]

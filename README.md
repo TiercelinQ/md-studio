@@ -1,4 +1,4 @@
-# MdReader - v1.0.0
+# MdReader - v1.1.0
 
 Desktop Markdown reader and WYSIWYG editor for Windows. Open a `.md` / `.markdown` file or a whole folder, read it rendered (tables, code highlighting, task lists, Mermaid diagrams), find your way with tabs, an outline, in-document search and zoom, and correct it without writing Markdown syntax. Saving rewrites **only the blocks you changed**: everything else stays byte-for-byte identical.
 
@@ -6,14 +6,16 @@ Interface in French.
 
 ## Features
 
+- Create a Markdown file (`Ctrl+N`): "Save as" dialog opened on the explorer folder, empty UTF-8 file, opened in editing mode. An existing file is opened, never emptied.
 - Open a file (`Ctrl+O`), a folder with all its subfolders (`Ctrl+Maj+O`), drag and drop, command-line argument, "Open with".
 - Single instance: a second launch hands its file or folder to the running window.
 - Explorer tree: Markdown files only, empty folders hidden, natural sort, filter, live refresh on disk changes, resizable (180 to 420).
 - Tabs: modified dot, close button or middle click, `Ctrl+W`, `Ctrl+Tab` / `Ctrl+Maj+Tab`, edit history and scroll position kept per tab.
-- Rendering: CommonMark + GitHub extensions (tables, task lists, strikethrough), headings 1 to 6, syntax highlighting, local images, internal links open a tab, web links open the default browser, anchors scroll.
+- Rendering: CommonMark + GitHub extensions (tables, task lists, strikethrough), headings 1 to 6, syntax highlighting, local images, internal links open a tab, web links open the default browser, anchors scroll. The document uses the full width left by the panes and the window; a loading screen covers the page while it renders.
 - Mermaid diagrams rendered in both themes; invalid sources show an error without breaking the document.
 - Outline (headings 1 to 3) following the scroll; search with highlighting and `n sur N` counter; zoom 70 to 200 %.
 - WYSIWYG editing (`Ctrl+E`): formatting bar with 17 commands (undo/redo, paragraph styles, bold, italic, strikethrough, inline code, lists, task list, quote, link, image, table, code block, Mermaid diagram, rule), Mermaid source editor.
+- Source mode (`Ctrl+U`): the raw Markdown text, read and edited as plain text, with search; unsaved WYSIWYG changes carry over, and the text is rendered again when you leave the mode.
 - Saving (`Ctrl+S`) keeps the original encoding (UTF-8, UTF-8 BOM, UTF-16) and line endings; confirmation when closing a modified tab or the window.
 - Banner when an open file changes or disappears on disk (reload or keep your version).
 - Light and dark themes, following Windows until a manual choice; narrow-window layout (overlay panes at 820 px and below).
@@ -121,8 +123,10 @@ md-reader/
 
 | Command | Service | Notes |
 | --- | --- | --- |
+| Create file | `IDialogService.PickNewMarkdownFile`, `ITextFileService.CreateAsync` | Never overwrites: creation fails on an existing file, which is opened instead |
 | Open file / folder / paths | `ITextFileService`, `IMarkdownRenderService`, `IFolderScanService`, `IFileWatchService` | Size warning above 5 MB; binary and denied files reported |
 | Save | `IDocumentSurface.SerializeAsync`, `IMarkdownComposeService`, `ITextFileService.WriteAsync` | Untouched blocks copied from the source, atomic write |
+| Source mode | `IDocumentSurface.ShowSource` / `GetSourceAsync`, `IMarkdownRenderService` | Saving in source mode writes the text as typed, in the file's line ending |
 | Close tab / window | `IDialogService.ConfirmSaveAsync` | Save, Don't save, Cancel |
 | Mode, zoom, panes, theme | `IPreferencesService`, `IAppThemeService` | Persisted settings |
 | Format (17 commands), link, image | `IDocumentSurface.ApplyFormat`, `IDialogService` | Link dialog validates the address |
@@ -139,6 +143,7 @@ Markdig parses the document with source positions; each top-level block is rende
 - Raw HTML in documents is sanitized (HtmlSanitizer) and the page runs under a strict Content-Security-Policy: no network access, no inline script, only the virtual host.
 - Navigation outside the virtual host is cancelled; web links go to the default browser after validation.
 - WebView2 developer tools are disabled in Release builds; no host object is exposed to the page.
+- WebView2 SmartScreen reputation checking is off: the pages come from the embedded virtual host, and the check would contact the network on every document.
 
 ## Conventions
 

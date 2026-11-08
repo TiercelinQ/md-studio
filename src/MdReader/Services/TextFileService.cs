@@ -28,6 +28,12 @@ public interface ITextFileService
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The written file, or a failure when the write did not happen.</returns>
     Task<Result<TextFile>> WriteAsync(string path, string text, TextFormat format, CancellationToken ct);
+
+    /// <summary>Creates an empty Markdown file (UTF-8 without BOM, CRLF). Never overwrites an existing file.</summary>
+    /// <param name="path">Absolute path with a Markdown extension.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>The created file, or a failure (invalid path, file already present, write denied).</returns>
+    Task<Result<TextFile>> CreateAsync(string path, CancellationToken ct);
 }
 
 /// <summary>Default <see cref="ITextFileService"/> working on the local file system.</summary>
@@ -51,6 +57,12 @@ public sealed partial class TextFileService(ILogger<TextFileService> logger) : I
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "Fichier temporaire non supprime {Path}")]
     private static partial void LogTempNotDeleted(ILogger logger, Exception? exception, string path);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Creation refusee, chemin non Markdown {Path}")]
+    private static partial void LogCreateRejected(ILogger logger, string path);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Echec de creation {Path}")]
+    private static partial void LogCreateFailed(ILogger logger, Exception? exception, string path);
 
     /// <inheritdoc/>
     public Result<long> GetSize(string path)
@@ -125,6 +137,32 @@ public sealed partial class TextFileService(ILogger<TextFileService> logger) : I
         {
             DeleteQuietly(temp);
             throw;
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task<Result<TextFile>> CreateAsync(string path, CancellationToken ct)
+    {
+        if (!Path.IsPathFullyQualified(path)
+            || !AppConfig.MarkdownExtensions.Contains(Path.GetExtension(path), StringComparer.OrdinalIgnoreCase))
+        {
+            LogCreateRejected(logger, path);
+            return Result<TextFile>.Failure(new ResultError(FeedbackType.Warning, Format(Strings.Error_NotMarkdown, path)));
+        }
+
+        ct.ThrowIfCancellationRequested();
+        try
+        {
+            // CreateNew fails when the file appeared in the meantime: an existing file is never emptied.
+            var stream = new FileStream(path, new FileStreamOptions { Mode = FileMode.CreateNew, Access = FileAccess.Write, Options = FileOptions.Asynchronous });
+            await stream.DisposeAsync().ConfigureAwait(false);
+            var info = new FileInfo(path);
+            return Result<TextFile>.Success(new TextFile(path, string.Empty, new TextFormat(TextEncodingKind.Utf8, LineEnding.CrLf), info.LastWriteTimeUtc, info.Length));
+        }
+        catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
+        {
+            LogCreateFailed(logger, ex, path);
+            return Result<TextFile>.Failure(new ResultError(FeedbackType.Danger, Format(Strings.Error_CreateFailed, path)));
         }
     }
 

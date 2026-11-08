@@ -10,6 +10,8 @@
   <data name="Banner_Keep" xml:space="preserve"><value>Conserver ma version</value></data>
   <data name="Banner_Reload" xml:space="preserve"><value>Recharger</value></data>
   <data name="Breadcrumb_Name" xml:space="preserve"><value>Chemin du fichier</value></data>
+  <data name="Command_CreateFile" xml:space="preserve"><value>Créer un fichier</value></data>
+  <data name="Command_CreateFile_Tooltip" xml:space="preserve"><value>Créer un fichier (Ctrl+N)</value></data>
   <data name="Command_Explorer_Name" xml:space="preserve"><value>Explorateur</value></data>
   <data name="Command_Explorer_Tooltip" xml:space="preserve"><value>Afficher ou masquer l’explorateur</value></data>
   <data name="Command_OpenFile" xml:space="preserve"><value>Ouvrir un fichier</value></data>
@@ -39,9 +41,11 @@
   <data name="Encoding_Utf16Le" xml:space="preserve"><value>UTF-16 LE</value></data>
   <data name="Encoding_Utf8" xml:space="preserve"><value>UTF-8</value></data>
   <data name="Encoding_Utf8Bom" xml:space="preserve"><value>UTF-8 avec BOM</value></data>
+  <data name="Error_CreateFailed" xml:space="preserve"><value>Impossible de créer {0}.</value></data>
   <data name="Error_FolderUnreadable" xml:space="preserve"><value>Impossible de lire le dossier {0}.</value></data>
   <data name="Error_LinkRefused" xml:space="preserve"><value>Lien non pris en charge : {0}</value></data>
   <data name="Error_NotFound" xml:space="preserve"><value>{0} est introuvable.</value></data>
+  <data name="Error_NotMarkdown" xml:space="preserve"><value>{0} n’est pas un fichier Markdown (.md ou .markdown).</value></data>
   <data name="Error_NotText" xml:space="preserve"><value>{0} n’est pas un fichier texte lisible.</value></data>
   <data name="Error_OpenDenied" xml:space="preserve"><value>Impossible d’ouvrir {0}. Accès refusé.</value></data>
   <data name="Error_SaveFailed" xml:space="preserve"><value>Impossible d’enregistrer {0}.</value></data>
@@ -83,13 +87,18 @@
   <data name="Link_Insert" xml:space="preserve"><value>Insérer</value></data>
   <data name="Link_Label" xml:space="preserve"><value>Adresse du lien</value></data>
   <data name="Link_Title" xml:space="preserve"><value>Insérer un lien</value></data>
+  <data name="Loading_Document" xml:space="preserve"><value>Chargement du document…</value></data>
   <data name="Mode_Editing" xml:space="preserve"><value>Édition</value></data>
   <data name="Mode_Editing_Tooltip" xml:space="preserve"><value>Édition (Ctrl+E)</value></data>
   <data name="Mode_Group" xml:space="preserve"><value>Mode d’affichage</value></data>
   <data name="Mode_Reading" xml:space="preserve"><value>Lecture</value></data>
   <data name="Mode_Reading_Tooltip" xml:space="preserve"><value>Lecture (Ctrl+E)</value></data>
+  <data name="Mode_Source" xml:space="preserve"><value>Source</value></data>
+  <data name="Mode_Source_Tooltip" xml:space="preserve"><value>Source (Ctrl+U)</value></data>
+  <data name="NewFile_DefaultName" xml:space="preserve"><value>Sans titre.md</value></data>
   <data name="NewTab_Tooltip" xml:space="preserve"><value>Ouvrir un fichier (Ctrl+O)</value></data>
   <data name="Notify_DiagramValidated" xml:space="preserve"><value>Diagramme validé. Le moteur Mermaid remplace l’aperçu.</value></data>
+  <data name="Notify_FileExists" xml:space="preserve"><value>{0} existe déjà : le fichier est ouvert.</value></data>
   <data name="Notify_Saved" xml:space="preserve"><value>Enregistré : {0}</value></data>
   <data name="Outline_Empty" xml:space="preserve"><value>Aucun document ouvert.</value></data>
   <data name="Outline_Title" xml:space="preserve"><value>Plan du document</value></data>

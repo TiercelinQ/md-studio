@@ -29,6 +29,11 @@ public interface IDialogService
     /// <returns>The chosen path, or null.</returns>
     string? PickMarkdownFile();
 
+    /// <summary>Asks for the name and folder of a new Markdown file. Does not ask to overwrite.</summary>
+    /// <param name="initialFolder">Folder shown first, or null for the default one.</param>
+    /// <returns>The chosen path (extension <c>.md</c> added when missing), or null.</returns>
+    string? PickNewMarkdownFile(string? initialFolder);
+
     /// <summary>Asks for a folder.</summary>
     /// <returns>The chosen path, or null.</returns>
     string? PickFolder();
@@ -74,6 +79,21 @@ public sealed class DialogService(IContentDialogService dialogs) : IDialogServic
     public string? PickMarkdownFile()
     {
         var dialog = new OpenFileDialog { Filter = Strings.Filter_Markdown, CheckFileExists = true };
+        return dialog.ShowDialog(Application.Current.MainWindow) == true ? dialog.FileName : null;
+    }
+
+    /// <inheritdoc/>
+    public string? PickNewMarkdownFile(string? initialFolder)
+    {
+        var dialog = new SaveFileDialog
+        {
+            Filter = Strings.Filter_Markdown,
+            DefaultExt = ".md",
+            AddExtension = true,
+            OverwritePrompt = false,
+            FileName = Strings.NewFile_DefaultName,
+            InitialDirectory = initialFolder ?? string.Empty,
+        };
         return dialog.ShowDialog(Application.Current.MainWindow) == true ? dialog.FileName : null;
     }
 

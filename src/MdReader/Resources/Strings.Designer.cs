@@ -34,6 +34,12 @@ public static class Strings
     /// <summary>Gets the text "Chemin du fichier".</summary>
     public static string Breadcrumb_Name => Get("Breadcrumb_Name");
 
+    /// <summary>Gets the text "Créer un fichier".</summary>
+    public static string Command_CreateFile => Get("Command_CreateFile");
+
+    /// <summary>Gets the text "Créer un fichier (Ctrl+N)".</summary>
+    public static string Command_CreateFile_Tooltip => Get("Command_CreateFile_Tooltip");
+
     /// <summary>Gets the text "Explorateur".</summary>
     public static string Command_Explorer_Name => Get("Command_Explorer_Name");
 
@@ -121,6 +127,9 @@ public static class Strings
     /// <summary>Gets the text "UTF-8 avec BOM".</summary>
     public static string Encoding_Utf8Bom => Get("Encoding_Utf8Bom");
 
+    /// <summary>Gets the text "Impossible de créer {0}.".</summary>
+    public static string Error_CreateFailed => Get("Error_CreateFailed");
+
     /// <summary>Gets the text "Impossible de lire le dossier {0}.".</summary>
     public static string Error_FolderUnreadable => Get("Error_FolderUnreadable");
 
@@ -129,6 +138,9 @@ public static class Strings
 
     /// <summary>Gets the text "{0} est introuvable.".</summary>
     public static string Error_NotFound => Get("Error_NotFound");
+
+    /// <summary>Gets the text "{0} n’est pas un fichier Markdown (.md ou .markdown).".</summary>
+    public static string Error_NotMarkdown => Get("Error_NotMarkdown");
 
     /// <summary>Gets the text "{0} n’est pas un fichier texte lisible.".</summary>
     public static string Error_NotText => Get("Error_NotText");
@@ -253,6 +265,9 @@ public static class Strings
     /// <summary>Gets the text "Insérer un lien".</summary>
     public static string Link_Title => Get("Link_Title");
 
+    /// <summary>Gets the text "Chargement du document…".</summary>
+    public static string Loading_Document => Get("Loading_Document");
+
     /// <summary>Gets the text "Édition".</summary>
     public static string Mode_Editing => Get("Mode_Editing");
 
@@ -268,11 +283,23 @@ public static class Strings
     /// <summary>Gets the text "Lecture (Ctrl+E)".</summary>
     public static string Mode_Reading_Tooltip => Get("Mode_Reading_Tooltip");
 
+    /// <summary>Gets the text "Source".</summary>
+    public static string Mode_Source => Get("Mode_Source");
+
+    /// <summary>Gets the text "Source (Ctrl+U)".</summary>
+    public static string Mode_Source_Tooltip => Get("Mode_Source_Tooltip");
+
+    /// <summary>Gets the text "Sans titre.md".</summary>
+    public static string NewFile_DefaultName => Get("NewFile_DefaultName");
+
     /// <summary>Gets the text "Ouvrir un fichier (Ctrl+O)".</summary>
     public static string NewTab_Tooltip => Get("NewTab_Tooltip");
 
     /// <summary>Gets the text "Diagramme validé. Le moteur Mermaid remplace l’aperçu.".</summary>
     public static string Notify_DiagramValidated => Get("Notify_DiagramValidated");
+
+    /// <summary>Gets the text "{0} existe déjà : le fichier est ouvert.".</summary>
+    public static string Notify_FileExists => Get("Notify_FileExists");
 
     /// <summary>Gets the text "Enregistré : {0}".</summary>
     public static string Notify_Saved => Get("Notify_Saved");

@@ -2,10 +2,11 @@
     x:Class="MdReader.Views.DocumentView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:controls="clr-namespace:MdReader.Views.Controls"
     xmlns:views="clr-namespace:MdReader.Views"
     xmlns:res="clr-namespace:MdReader.Resources">
-    <!-- Zone F: C-14 breadcrumb and search, disk banner (deviation E-07), document page, C-25 empty state -->
+    <!-- Zone F: C-14 breadcrumb and search, disk banner (deviation E-07), document page, loading screen, C-25 empty state -->
     <Grid Style="{StaticResource DocumentAreaStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -68,6 +69,12 @@
         </Border>
 
         <controls:DocumentHost Grid.Row="2" Style="{StaticResource DocumentHostStyle}" />
+        <Grid Grid.Row="2" AutomationProperties.Name="{x:Static res:Strings.Loading_Document}" Style="{StaticResource LoadingStateStyle}">
+            <StackPanel Style="{StaticResource LoadingContentStyle}">
+                <ui:ProgressRing Style="{StaticResource LoadingRingStyle}" />
+                <TextBlock Style="{StaticResource LoadingTextStyle}" Text="{x:Static res:Strings.Loading_Document}" />
+            </StackPanel>
+        </Grid>
         <views:EmptyStateView Grid.Row="2" Visibility="{Binding HasNoDocument, Converter={StaticResource BooleanToVisibility}}" />
     </Grid>
 </UserControl>

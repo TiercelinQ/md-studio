@@ -10,6 +10,9 @@ public enum DocumentMode
 
     /// <summary>WYSIWYG editing.</summary>
     Editing,
+
+    /// <summary>Raw Markdown text, read and edited as plain text.</summary>
+    Source,
 }
 
 /// <summary>Theme sent to the document page: dark flag and CSS variables built from the color tokens.</summary>
@@ -26,7 +29,7 @@ public sealed record DocumentPageState(DocumentMode Mode, double Zoom, PageTheme
 /// <summary>Message sent by the application to the document page.</summary>
 public sealed class HostMessage
 {
-    /// <summary>Gets the message type (<c>open</c>, <c>close</c>, <c>activate</c>, <c>load</c>, <c>setMode</c>, <c>setZoom</c>, <c>setTheme</c>, <c>format</c>, <c>search</c>, <c>searchStep</c>, <c>searchClear</c>, <c>scrollTo</c>, <c>serialize</c>, <c>focus</c>).</summary>
+    /// <summary>Gets the message type (<c>open</c>, <c>close</c>, <c>activate</c>, <c>load</c>, <c>setMode</c>, <c>showSource</c>, <c>setZoom</c>, <c>setTheme</c>, <c>format</c>, <c>search</c>, <c>searchStep</c>, <c>searchClear</c>, <c>scrollTo</c>, <c>serialize</c>, <c>getSource</c>, <c>focus</c>).</summary>
     public required string Type { get; init; }
 
     /// <summary>Gets the target tab identifier.</summary>
@@ -34,6 +37,9 @@ public sealed class HostMessage
 
     /// <summary>Gets the document HTML (<c>load</c>).</summary>
     public string? Html { get; init; }
+
+    /// <summary>Gets the Markdown text shown in source mode (<c>showSource</c>).</summary>
+    public string? Source { get; init; }
 
     /// <summary>Gets the mode (<c>load</c>, <c>setMode</c>).</summary>
     public DocumentMode? Mode { get; init; }
@@ -65,18 +71,21 @@ public sealed class HostMessage
     /// <summary>Gets the heading anchor (<c>scrollTo</c>).</summary>
     public string? Anchor { get; init; }
 
-    /// <summary>Gets the request identifier (<c>serialize</c>).</summary>
+    /// <summary>Gets the request identifier (<c>serialize</c>, <c>getSource</c>).</summary>
     public int? RequestId { get; init; }
 }
 
 /// <summary>Message sent by the document page to the application.</summary>
 public sealed class PageMessage
 {
-    /// <summary>Gets the message type (<c>hostReady</c>, <c>ready</c>, <c>changed</c>, <c>stats</c>, <c>currentHeading</c>, <c>searchResult</c>, <c>formatState</c>, <c>link</c>, <c>requestLink</c>, <c>serialized</c>, <c>zoomWheel</c>, <c>notify</c>, <c>drop</c>).</summary>
+    /// <summary>Gets the message type (<c>hostReady</c>, <c>ready</c>, <c>rendered</c>, <c>changed</c>, <c>sourceChanged</c>, <c>stats</c>, <c>currentHeading</c>, <c>searchResult</c>, <c>formatState</c>, <c>link</c>, <c>requestLink</c>, <c>serialized</c>, <c>zoomWheel</c>, <c>notify</c>, <c>drop</c>).</summary>
     public string Type { get; init; } = string.Empty;
 
     /// <summary>Gets the source tab identifier.</summary>
     public string? Tab { get; init; }
+
+    /// <summary>Gets the Markdown text of the source mode (<c>sourceChanged</c>, <c>serialized</c> of a <c>getSource</c>).</summary>
+    public string? Source { get; init; }
 
     /// <summary>Gets the clicked link target (<c>link</c>).</summary>
     public string? Href { get; init; }

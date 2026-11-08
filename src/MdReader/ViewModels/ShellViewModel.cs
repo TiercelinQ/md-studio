@@ -1,6 +1,9 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -11,7 +14,7 @@ using Microsoft.Extensions.Logging;
 
 namespace MdReader.ViewModels;
 
-/// <summary>Main window: tabs, mode, panes, zoom, theme, opening, saving and closing.</summary>
+/// <summary>Main window: tabs, mode, panes, zoom, theme, creating, opening, saving and closing.</summary>
 public sealed partial class ShellViewModel : ObservableObject
 {
     [LoggerMessage(Level = LogLevel.Information, Message = "Chemin ignore a l'ouverture {Path}")]
@@ -19,6 +22,11 @@ public sealed partial class ShellViewModel : ObservableObject
 
     [LoggerMessage(Level = LogLevel.Error, Message = "Echec de la page du document")]
     private static partial void LogPageFailure(ILogger logger, Exception? exception);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Fichier {Name} lu et rendu en {ElapsedMs} ms")]
+    private static partial void LogFilePrepared(ILogger logger, string name, double elapsedMs);
+
+    private static readonly CompositeFormat FileExistsFormat = CompositeFormat.Parse(Strings.Notify_FileExists);
 
     private static readonly string[] FormatProperties =
     [
@@ -101,12 +109,12 @@ public sealed partial class ShellViewModel : ObservableObject
     /// <summary>Gets or sets the active document.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasDocument), nameof(HasNoDocument), nameof(IsFormatBarVisible), nameof(SelectedBlockStyle), nameof(BoldToggle), nameof(ItalicToggle), nameof(StrikeToggle), nameof(BulletListToggle), nameof(NumberedListToggle))]
-    [NotifyCanExecuteChangedFor(nameof(SaveCommand), nameof(ToggleModeCommand), nameof(OpenSearchCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SaveCommand), nameof(ToggleModeCommand), nameof(SetModeCommand), nameof(OpenSearchCommand))]
     public partial DocumentViewModel? ActiveDocument { get; set; }
 
     /// <summary>Gets the window mode.</summary>
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsReading), nameof(IsEditing), nameof(ModeText), nameof(IsFormatBarVisible))]
+    [NotifyPropertyChangedFor(nameof(IsReading), nameof(IsEditing), nameof(IsSource), nameof(ModeText), nameof(IsFormatBarVisible))]
     public partial DocumentMode Mode { get; private set; }
 
     /// <summary>Gets a value indicating whether the explorer is shown.</summary>
@@ -151,7 +159,7 @@ public sealed partial class ShellViewModel : ObservableObject
         {
             if (value)
             {
-                ApplyMode(DocumentMode.Reading);
+                SetModeCommand.Execute(DocumentMode.Reading);
             }
         }
     }
@@ -164,7 +172,20 @@ public sealed partial class ShellViewModel : ObservableObject
         {
             if (value && HasDocument)
             {
-                ApplyMode(DocumentMode.Editing);
+                SetModeCommand.Execute(DocumentMode.Editing);
+            }
+        }
+    }
+
+    /// <summary>Gets or sets a value indicating whether the mode is source (segment binding).</summary>
+    public bool IsSource
+    {
+        get => Mode == DocumentMode.Source;
+        set
+        {
+            if (value && HasDocument)
+            {
+                SetModeCommand.Execute(DocumentMode.Source);
             }
         }
     }
@@ -249,7 +270,12 @@ public sealed partial class ShellViewModel : ObservableObject
     public bool IsOutlineOverlay => IsOutlineVisible && IsNarrow;
 
     /// <summary>Gets the mode label of the status bar.</summary>
-    public string ModeText => IsEditing ? Strings.Mode_Editing : Strings.Mode_Reading;
+    public string ModeText => Mode switch
+    {
+        DocumentMode.Editing => Strings.Mode_Editing,
+        DocumentMode.Source => Strings.Mode_Source,
+        _ => Strings.Mode_Reading,
+    };
 
     /// <summary>Gets the zoom label ("100 %", non-breaking space).</summary>
     public string ZoomText => $"{Math.Round(Zoom * 100)} %";
@@ -376,23 +402,53 @@ public sealed partial class ShellViewModel : ObservableObject
             return;
         }
 
-        var read = await _files.ReadAsync(full, ct);
-        if (!read.Ok)
-        {
-            _feedback.Show(read.Error!);
-            return;
-        }
-
-        var rendered = await _renderer.RenderAsync(read.Data!, ct);
+        // The tab and its loading screen appear at once; a large file can take seconds to read and render.
         var document = _documentFactory();
-        document.Initialize(read.Data!, rendered, new DocumentPageState(Mode, Zoom, _theme.PageTheme), Explorer.RootPath);
+        document.Prepare(full, new DocumentPageState(Mode, Zoom, _theme.PageTheme), Explorer.RootPath);
         document.OpenFileRequested += OnOpenFileRequested;
         document.LinkRequested += OnLinkRequested;
         document.OutlineNavigated += OnOutlineNavigated;
         Documents.Add(document);
         ActiveDocument = document;
-        _watcher.WatchFile(full);
         CloseExplorerOverlay();
+
+        var started = Stopwatch.GetTimestamp();
+        Result<TextFile> read;
+        RenderedDocument? rendered = null;
+        try
+        {
+            read = await _files.ReadAsync(full, ct);
+            if (read.Ok)
+            {
+                rendered = await _renderer.RenderAsync(read.Data!, ct);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            Remove(document);
+            throw;
+        }
+
+        if (!read.Ok)
+        {
+            Remove(document);
+            _feedback.Show(read.Error!);
+            return;
+        }
+
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+            var name = Path.GetFileName(full);
+            var elapsedMs = Stopwatch.GetElapsedTime(started).TotalMilliseconds;
+            LogFilePrepared(_logger, name, elapsedMs);
+        }
+
+        // The tab may have been closed while the file was read.
+        if (Documents.Contains(document))
+        {
+            document.Show(read.Data!, rendered!);
+            _watcher.WatchFile(full);
+        }
     }
 
     /// <summary>Closes a tab, asking to save a modified document first.</summary>
@@ -411,21 +467,7 @@ public sealed partial class ShellViewModel : ObservableObject
             }
         }
 
-        var index = Documents.IndexOf(document);
-        if (ReferenceEquals(ActiveDocument, document))
-        {
-            ActiveDocument = index + 1 < Documents.Count ? Documents[index + 1] : index > 0 ? Documents[index - 1] : null;
-        }
-
-        document.OpenFileRequested -= OnOpenFileRequested;
-        document.LinkRequested -= OnLinkRequested;
-        document.OutlineNavigated -= OnOutlineNavigated;
-        Documents.Remove(document);
-        if (!Documents.Any(d => string.Equals(d.FilePath, document.FilePath, StringComparison.OrdinalIgnoreCase)))
-        {
-            _watcher.UnwatchFile(document.FilePath);
-        }
-
+        Remove(document);
         return true;
     }
 
@@ -487,31 +529,33 @@ public sealed partial class ShellViewModel : ObservableObject
     /// <returns>True when the shortcut was handled.</returns>
     public bool HandleShortcut(string key, bool control, bool shift)
     {
-        IRelayCommand? command = (key, control, shift) switch
+        (IRelayCommand Command, object? Parameter)? shortcut = (key, control, shift) switch
         {
-            ("O", true, false) => OpenFileCommand,
-            ("O", true, true) => OpenFolderCommand,
-            ("S", true, false) => SaveCommand,
-            ("E", true, false) => ToggleModeCommand,
-            ("F", true, false) => OpenSearchCommand,
-            ("W", true, false) => CloseTabCommand,
-            ("Tab", true, false) => NextTabCommand,
-            ("Tab", true, true) => PreviousTabCommand,
-            ("Plus", true, _) => ZoomInCommand,
-            ("Minus", true, _) => ZoomOutCommand,
-            ("0", true, false) => ZoomResetCommand,
-            ("Escape", false, false) => EscapeCommand,
+            ("N", true, false) => (CreateFileCommand, null),
+            ("O", true, false) => (OpenFileCommand, null),
+            ("O", true, true) => (OpenFolderCommand, null),
+            ("S", true, false) => (SaveCommand, null),
+            ("E", true, false) => (ToggleModeCommand, null),
+            ("U", true, false) => (SetModeCommand, DocumentMode.Source),
+            ("F", true, false) => (OpenSearchCommand, null),
+            ("W", true, false) => (CloseTabCommand, null),
+            ("Tab", true, false) => (NextTabCommand, null),
+            ("Tab", true, true) => (PreviousTabCommand, null),
+            ("Plus", true, _) => (ZoomInCommand, null),
+            ("Minus", true, _) => (ZoomOutCommand, null),
+            ("0", true, false) => (ZoomResetCommand, null),
+            ("Escape", false, false) => (EscapeCommand, null),
             _ => null,
         };
 
-        if (command is null)
+        if (shortcut is not ({ } command, var parameter))
         {
             return false;
         }
 
-        if (command.CanExecute(null))
+        if (command.CanExecute(parameter))
         {
-            command.Execute(null);
+            command.Execute(parameter);
         }
 
         return true;
@@ -554,13 +598,40 @@ public sealed partial class ShellViewModel : ObservableObject
         }
 
         Explorer.SelectPath(newValue?.FilePath);
-        if (newValue is null && IsEditing)
+        if (newValue is null && !IsReading)
         {
             Mode = DocumentMode.Reading;
         }
     }
 
     private static bool CanSave(DocumentViewModel? document) => document?.IsModified == true;
+
+    [RelayCommand]
+    private async Task CreateFileAsync(CancellationToken ct)
+    {
+        if (_dialogs.PickNewMarkdownFile(Explorer.RootPath) is not { } path)
+        {
+            return;
+        }
+
+        // The save dialog does not ask to overwrite: an existing file is opened, never emptied.
+        if (File.Exists(path))
+        {
+            _feedback.Show(new ResultError(FeedbackType.Info, string.Format(CultureInfo.CurrentCulture, FileExistsFormat, Path.GetFileName(path))));
+            await OpenPathAsync(path, ct);
+            return;
+        }
+
+        var created = await _files.CreateAsync(path, ct);
+        if (!created.Ok)
+        {
+            _feedback.Show(created.Error!);
+            return;
+        }
+
+        await OpenPathAsync(path, ct);
+        await SetModeAsync(DocumentMode.Editing, ct);
+    }
 
     [RelayCommand]
     private async Task OpenFileAsync(CancellationToken ct)
@@ -616,7 +687,25 @@ public sealed partial class ShellViewModel : ObservableObject
     private void PreviousTab() => StepTab(-1);
 
     [RelayCommand(CanExecute = nameof(HasDocument))]
-    private void ToggleMode() => ApplyMode(IsEditing ? DocumentMode.Reading : DocumentMode.Editing);
+    private void ToggleMode() => SetModeCommand.Execute(IsEditing ? DocumentMode.Reading : DocumentMode.Editing);
+
+    [RelayCommand(CanExecute = nameof(CanSetMode))]
+    private async Task SetModeAsync(DocumentMode mode, CancellationToken ct)
+    {
+        if (Mode == mode)
+        {
+            return;
+        }
+
+        Mode = mode;
+        await Task.WhenAll(Documents.Select(d => d.ApplyModeAsync(mode, ct)));
+        if (mode != DocumentMode.Reading)
+        {
+            ActiveDocument?.Surface?.Focus();
+        }
+    }
+
+    private bool CanSetMode(DocumentMode mode) => HasDocument || mode == DocumentMode.Reading;
 
     [RelayCommand]
     private async Task ToggleExplorerAsync(CancellationToken ct)
@@ -721,25 +810,6 @@ public sealed partial class ShellViewModel : ObservableObject
         await _preferences.UpdateAsync(p => p with { LastFolder = Explorer.RootPath, ExplorerVisible = IsNarrow ? p.ExplorerVisible : true }, ct);
     }
 
-    private void ApplyMode(DocumentMode mode)
-    {
-        if (Mode == mode)
-        {
-            return;
-        }
-
-        Mode = mode;
-        foreach (var document in Documents)
-        {
-            document.ApplyMode(mode);
-        }
-
-        if (mode == DocumentMode.Editing)
-        {
-            ActiveDocument?.Surface?.Focus();
-        }
-    }
-
     private async Task ChangeZoomAsync(double delta)
     {
         var zoom = Math.Round(Math.Clamp(Zoom + delta, AppConfig.ZoomMin, AppConfig.ZoomMax), 1);
@@ -766,6 +836,26 @@ public sealed partial class ShellViewModel : ObservableObject
 
         var index = ActiveDocument is null ? 0 : Documents.IndexOf(ActiveDocument);
         ActiveDocument = Documents[(index + step + Documents.Count) % Documents.Count];
+    }
+
+    /// <summary>Removes a tab, activating its right neighbour, else its left one.</summary>
+    private void Remove(DocumentViewModel document)
+    {
+        var index = Documents.IndexOf(document);
+        if (ReferenceEquals(ActiveDocument, document))
+        {
+            ActiveDocument = index + 1 < Documents.Count ? Documents[index + 1] : index > 0 ? Documents[index - 1] : null;
+        }
+
+        document.OpenFileRequested -= OnOpenFileRequested;
+        document.LinkRequested -= OnLinkRequested;
+        document.OutlineNavigated -= OnOutlineNavigated;
+        document.Abandon();
+        Documents.Remove(document);
+        if (!Documents.Any(d => string.Equals(d.FilePath, document.FilePath, StringComparison.OrdinalIgnoreCase)))
+        {
+            _watcher.UnwatchFile(document.FilePath);
+        }
     }
 
     private void CloseExplorerOverlay()

@@ -21,12 +21,31 @@ html { background: var(--doc); }
 body { margin: 0; background: var(--doc); color: var(--fg); font-family: var(--font-ui); }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: auto; } }
 
-/* Column: max 760, centered; padding 28 / 40 / 72 (narrow: 20 / 16 / 56) */
+/* Column: full width of zone F (deviation E-22), following the panes and the window, and at least the
+   visible height, so a click anywhere below a short (or new, empty) document lands in it;
+   padding 28 / 40 / 72 (narrow: 20 / 16 / 56) */
 .doc {
-    max-width: 760px; margin: 0 auto; padding: 28px 40px 72px; box-sizing: border-box;
+    min-height: 100vh; padding: 28px 40px 72px; box-sizing: border-box;
     font-size: calc(15px * var(--zoom)); line-height: 1.65; overflow-wrap: anywhere; outline: none;
 }
 @media (max-width: 640px) { .doc { padding: 20px 16px 56px; } }
+
+/* Source mode: raw Markdown in a textarea, same padding as the document column. The highlight layer
+   below it shares every metric, so its marks sit exactly under the matching characters. */
+.source-box { display: none; position: relative; background: var(--doc); }
+body.source-mode .doc { display: none; }
+body.source-mode .source-box { display: block; }
+.source {
+    display: block; width: 100%; margin: 0; padding: 28px 40px 72px; border: 0; box-sizing: border-box;
+    font-family: var(--font-mono); font-size: calc(13.5px * var(--zoom)); line-height: 1.6; tab-size: 4;
+    white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; letter-spacing: normal;
+}
+@media (max-width: 640px) { .source { padding: 20px 16px 56px; } }
+.source-hits { position: absolute; inset: 0; overflow: hidden; color: transparent; pointer-events: none; }
+.source-input {
+    position: relative; min-height: 100vh; overflow: hidden; resize: none; outline: none;
+    color: var(--fg); caret-color: var(--fg); background: transparent;
+}
 .doc > .mdb-hidden { display: none; }
 
 .doc p { margin: .8em 0; }
@@ -74,8 +93,9 @@ body { margin: 0; background: var(--doc); color: var(--fg); font-family: var(--f
 .doc .img-missing { display: block; margin: 1em 0; color: var(--fg3); font-style: italic; }
 
 /* C-21 search highlight */
-.doc mark.mdr-hit { background: var(--mark); color: var(--mark-fg); border-radius: 2px; }
-.doc mark.mdr-hit.mdr-cur { background: var(--mark-cur); }
+mark.mdr-hit { background: var(--mark); color: var(--mark-fg); border-radius: 2px; }
+mark.mdr-hit.mdr-cur { background: var(--mark-cur); }
+.source-hits mark.mdr-hit { color: transparent; }
 
 /* C-20 Mermaid frame */
 .mermaid-frame {
