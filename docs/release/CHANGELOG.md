@@ -4,6 +4,8 @@ All notable changes to this project are documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+### Changed
+- The application is renamed from MdReader to MdStudio: executable `MdStudio.exe`, data folder `%APPDATA%\MdStudio`, debug variable `MDSTUDIO_DEBUG`. On first launch, the preferences of `%APPDATA%\MdReader` are copied over (that folder is left untouched); logs and the WebView2 profile start fresh. Shortcuts and "Open with" associations must point to `MdStudio.exe`.
 
 ## [1.1.0] - 2026-11-08
 ### Added

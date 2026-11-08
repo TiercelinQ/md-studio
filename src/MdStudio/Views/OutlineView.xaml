@@ -1,0 +1,27 @@
+<UserControl
+    x:Class="MdStudio.Views.OutlineView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:res="clr-namespace:MdStudio.Resources">
+    <!-- Zone G: C-11 header, C-13 outline entries -->
+    <Border AutomationProperties.Name="{x:Static res:Strings.Outline_Title}" Style="{StaticResource OutlinePaneStyle}">
+        <DockPanel>
+            <DockPanel DockPanel.Dock="Top" Style="{StaticResource PaneHeaderStyle}">
+                <TextBlock Style="{StaticResource PaneHeaderTextStyle}" Text="{x:Static res:Strings.Outline_Title}" />
+            </DockPanel>
+            <Grid>
+                <ListBox
+                    x:Name="Entries"
+                    AutomationProperties.Name="{x:Static res:Strings.Outline_Title}"
+                    DisplayMemberPath="Text"
+                    ItemContainerStyle="{StaticResource OutlineItemStyle}"
+                    ItemsSource="{Binding ActiveDocument.Outline}"
+                    SelectedValue="{Binding ActiveDocument.CurrentAnchor, Mode=OneWay}"
+                    SelectedValuePath="Anchor"
+                    Style="{StaticResource OutlineListStyle}"
+                    Visibility="{Binding HasDocument, Converter={StaticResource BooleanToVisibility}}" />
+                <TextBlock Style="{StaticResource PaneEmptyMessageStyle}" Text="{x:Static res:Strings.Outline_Empty}" Visibility="{Binding HasNoDocument, Converter={StaticResource BooleanToVisibility}}" />
+            </Grid>
+        </DockPanel>
+    </Border>
+</UserControl>

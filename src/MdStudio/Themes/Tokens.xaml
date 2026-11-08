@@ -1,0 +1,191 @@
+<!-- ============================================================
+     Tokens.xaml - MdStudio v1.0.0
+     Reference: design-system.md v1.0 (WPF) - specification chapter 5 (deviation E-01)
+     Colors live in Tokens.Light.xaml / Tokens.Dark.xaml; this file holds fixed values only.
+     ============================================================ -->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+    <!-- TYPOGRAPHY (specification 5.4) -->
+    <FontFamily x:Key="FontFamilyUi">Segoe UI Variable Text, Segoe UI</FontFamily>
+    <FontFamily x:Key="FontFamilyMono">Cascadia Mono, Consolas</FontFamily>
+    <sys:Double x:Key="FontSizeMicro">11.5</sys:Double>
+    <sys:Double x:Key="FontSizeCaption">12</sys:Double>
+    <sys:Double x:Key="FontSizeSmall">12.5</sys:Double>
+    <sys:Double x:Key="FontSizeBody">13</sys:Double>
+    <sys:Double x:Key="FontSizeDialogTitle">18</sys:Double>
+    <sys:Double x:Key="FontSizeEmptyTitle">20</sys:Double>
+    <sys:Double x:Key="LineHeightBody">18.2</sys:Double>
+    <FontWeight x:Key="FontWeightNormal">Normal</FontWeight>
+    <FontWeight x:Key="FontWeightSemiBold">SemiBold</FontWeight>
+
+    <!-- FIXED SIZES (specification 3.3, 5.8) -->
+    <sys:Double x:Key="TitleBarHeight">40</sys:Double>
+    <sys:Double x:Key="CommandBarMinHeight">48</sys:Double>
+    <sys:Double x:Key="FormatBarHeight">40</sys:Double>
+    <sys:Double x:Key="StatusBarHeight">26</sys:Double>
+    <sys:Double x:Key="PaneHeaderHeight">36</sys:Double>
+    <sys:Double x:Key="OutlineWidth">240</sys:Double>
+    <sys:Double x:Key="SplitterWidth">4</sys:Double>
+    <sys:Double x:Key="SplitterKeyboardIncrement">16</sys:Double>
+    <sys:Double x:Key="TabHeight">34</sys:Double>
+    <sys:Double x:Key="TabMinWidth">96</sys:Double>
+    <sys:Double x:Key="TabMaxWidth">190</sys:Double>
+    <sys:Double x:Key="TabCloseSize">22</sys:Double>
+    <sys:Double x:Key="ModifiedDotSize">8</sys:Double>
+    <sys:Double x:Key="NewTabButtonSize">30</sys:Double>
+    <sys:Double x:Key="CommandButtonHeight">36</sys:Double>
+    <sys:Double x:Key="ToolButtonSize">30</sys:Double>
+    <sys:Double x:Key="ToolButtonSmallSize">26</sys:Double>
+    <sys:Double x:Key="SegmentHeight">30</sys:Double>
+    <sys:Double x:Key="SegmentIndicatorWidth">16</sys:Double>
+    <sys:Double x:Key="SegmentIndicatorHeight">2</sys:Double>
+    <sys:Double x:Key="TreeRowHeight">30</sys:Double>
+    <sys:Double x:Key="TreeChevronBox">14</sys:Double>
+    <sys:Double x:Key="TreeRowBaseIndent">6</sys:Double>
+    <sys:Double x:Key="TreeIndentPerLevel">16</sys:Double>
+    <sys:Double x:Key="TreeRowRightPadding">8</sys:Double>
+    <sys:Double x:Key="OutlineRowHeight">28</sys:Double>
+    <sys:Double x:Key="FilterFieldHeight">32</sys:Double>
+    <sys:Double x:Key="SearchFieldHeight">26</sys:Double>
+    <sys:Double x:Key="SearchFieldWidth">170</sys:Double>
+    <sys:Double x:Key="SearchFieldNarrowWidth">110</sys:Double>
+    <sys:Double x:Key="SearchCounterMinWidth">64</sys:Double>
+    <sys:Double x:Key="StandardButtonHeight">34</sys:Double>
+    <sys:Double x:Key="MiniButtonHeight">26</sys:Double>
+    <sys:Double x:Key="ZoomButtonHeight">20</sys:Double>
+    <sys:Double x:Key="ZoomButtonMinWidth">22</sys:Double>
+    <sys:Double x:Key="ParagraphStyleMinWidth">132</sys:Double>
+    <sys:Double x:Key="DialogMaxWidth">440</sys:Double>
+    <sys:Double x:Key="DialogFormMinWidth">320</sys:Double>
+    <sys:Double x:Key="EmptyStateMaxWidth">420</sys:Double>
+    <sys:Double x:Key="NarrowExplorerMaxWidth">280</sys:Double>
+    <sys:Double x:Key="NarrowOutlineMaxWidth">260</sys:Double>
+    <sys:Double x:Key="SeparatorWidth">1</sys:Double>
+
+    <!-- ICONS (specification 5.6) -->
+    <sys:Double x:Key="IconGrid">16</sys:Double>
+    <sys:Double x:Key="IconSizeDefault">16</sys:Double>
+    <sys:Double x:Key="IconSizeApp">18</sys:Double>
+    <sys:Double x:Key="IconSizeTab">15</sys:Double>
+    <sys:Double x:Key="IconSizeRootFolder">20</sys:Double>
+    <sys:Double x:Key="IconSizeNewTab">14</sys:Double>
+    <sys:Double x:Key="IconSizeFilter">13</sys:Double>
+    <sys:Double x:Key="IconSizeSearchButton">12</sys:Double>
+    <sys:Double x:Key="IconSizeMini">10</sys:Double>
+    <sys:Double x:Key="IconSizeBreadcrumb">9</sys:Double>
+    <sys:Double x:Key="IconSizeEmpty">44</sys:Double>
+    <sys:Double x:Key="IconStrokeDefault">1.25</sys:Double>
+    <sys:Double x:Key="IconStrokeBullets">1.6</sys:Double>
+    <sys:Double x:Key="IconStrokeImage">1.4</sys:Double>
+    <sys:Double x:Key="IconStrokeEmpty">1</sys:Double>
+    <sys:Double x:Key="IconStrokeAppGlyph">1.2</sys:Double>
+    <sys:Double x:Key="ChevronOpenAngle">90</sys:Double>
+
+    <!-- SHAPE (specification 5.5) -->
+    <CornerRadius x:Key="CornerRadiusSm">4</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusMd">6</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusLg">8</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusTab">8,8,0,0</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusBadge">9</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusIndicator">1</CornerRadius>
+    <CornerRadius x:Key="CornerRadiusAccentLeft">6,0,0,6</CornerRadius>
+    <sys:Double x:Key="RadiusLg">8</sys:Double>
+    <sys:Double x:Key="RadiusApp">2.5</sys:Double>
+    <Thickness x:Key="BorderWidth">1</Thickness>
+    <Thickness x:Key="BorderBottom">0,0,0,1</Thickness>
+    <Thickness x:Key="BorderTop">0,1,0,0</Thickness>
+    <Thickness x:Key="BorderLeft">1,0,0,0</Thickness>
+    <Thickness x:Key="BorderRight">0,0,1,0</Thickness>
+    <sys:Double x:Key="StrokeThin">1</sys:Double>
+    <sys:Double x:Key="AccentBarWidth">3</sys:Double>
+    <sys:Double x:Key="BorderWidthAccent">4</sys:Double>
+    <Thickness x:Key="TreeAccentBarMargin">0,7</Thickness>
+    <Thickness x:Key="OutlineAccentBarMargin">0,6</Thickness>
+    <DoubleCollection x:Key="DashPattern">4 3</DoubleCollection>
+
+    <!-- SPACING (specification 5.8, named per component) -->
+    <Thickness x:Key="AppIconMargin">12,0,10,0</Thickness>
+    <Thickness x:Key="TabPadding">10,0,6,0</Thickness>
+    <Thickness x:Key="TabIconGap">0,0,8,0</Thickness>
+    <Thickness x:Key="TabCloseMargin">6,0,0,0</Thickness>
+    <Thickness x:Key="NewTabMargin">2,0,0,0</Thickness>
+    <Thickness x:Key="CommandBarPadding">10,0</Thickness>
+    <Thickness x:Key="CommandBarCompactPadding">10,4</Thickness>
+    <Thickness x:Key="CommandButtonPadding">10,0</Thickness>
+    <Thickness x:Key="CommandButtonGap">0,0,2,0</Thickness>
+    <Thickness x:Key="CommandLabelMargin">8,0,0,0</Thickness>
+    <Thickness x:Key="CommandSeparatorMargin">4,10</Thickness>
+    <Thickness x:Key="FormatSeparatorMargin">4,8</Thickness>
+    <Thickness x:Key="FormatBarPadding">10,0</Thickness>
+    <Thickness x:Key="SegmentContainerPadding">2</Thickness>
+    <Thickness x:Key="SegmentContainerMargin">6,0</Thickness>
+    <Thickness x:Key="SegmentPadding">12,0</Thickness>
+    <Thickness x:Key="SegmentCompactPadding">9,0</Thickness>
+    <Thickness x:Key="SegmentLabelMargin">7,0,0,0</Thickness>
+    <Thickness x:Key="SegmentIndicatorMargin">0,0,0,2</Thickness>
+    <Thickness x:Key="ParagraphStylePadding">8,0</Thickness>
+    <Thickness x:Key="ParagraphStyleMargin">0,0,4,0</Thickness>
+    <Thickness x:Key="PaneHeaderMargin">14,0,6,0</Thickness>
+    <Thickness x:Key="RootFolderMargin">14,2,14,8</Thickness>
+    <Thickness x:Key="RootFolderIconGap">0,0,10,0</Thickness>
+    <Thickness x:Key="FilterFieldMargin">10,0,10,8</Thickness>
+    <Thickness x:Key="FilterTextPadding">30,0,10,0</Thickness>
+    <Thickness x:Key="FilterIconMargin">9,9,0,0</Thickness>
+    <Thickness x:Key="FilterPlaceholderMargin">31,0,0,0</Thickness>
+    <Thickness x:Key="TreeAreaMargin">6,0,6,8</Thickness>
+    <Thickness x:Key="TreeRowMargin">0,1</Thickness>
+    <Thickness x:Key="TreeItemGap">6,0,0,0</Thickness>
+    <Thickness x:Key="ExplorerFooterPadding">14,7</Thickness>
+    <Thickness x:Key="PaneEmptyMargin">14,12</Thickness>
+    <Thickness x:Key="PaneEmptyButtonMargin">14,0</Thickness>
+    <Thickness x:Key="OutlineListPadding">8,0,8,8</Thickness>
+    <Thickness x:Key="OutlineLevel1Padding">8,0,8,0</Thickness>
+    <Thickness x:Key="OutlineLevel2Padding">20,0,8,0</Thickness>
+    <Thickness x:Key="OutlineLevel3Padding">32,0,8,0</Thickness>
+    <Thickness x:Key="DocumentHeaderPadding">20,0,12,0</Thickness>
+    <Thickness x:Key="SearchBarMargin">12,0,0,0</Thickness>
+    <Thickness x:Key="SearchFieldPadding">8,0</Thickness>
+    <Thickness x:Key="SearchItemGap">4,0,0,0</Thickness>
+    <Thickness x:Key="BreadcrumbChevronMargin">6,0</Thickness>
+    <Thickness x:Key="BannerPadding">20,6,12,6</Thickness>
+    <Thickness x:Key="BannerButtonMargin">8,0,0,0</Thickness>
+    <Thickness x:Key="StandardButtonPadding">18,0</Thickness>
+    <Thickness x:Key="MiniButtonPadding">10,0</Thickness>
+    <Thickness x:Key="StatusBarPadding">12,0</Thickness>
+    <Thickness x:Key="StatusItemMargin">14,0,0,0</Thickness>
+    <Thickness x:Key="BadgePadding">7,0</Thickness>
+    <Thickness x:Key="ZoomButtonPadding">4,0</Thickness>
+    <Thickness x:Key="ZoomButtonGap">1,0</Thickness>
+    <Thickness x:Key="EmptyStateMargin">16</Thickness>
+    <Thickness x:Key="EmptyStateIconMargin">0,0,0,12</Thickness>
+    <Thickness x:Key="EmptyStateTitleMargin">0,0,0,6</Thickness>
+    <Thickness x:Key="EmptyStateTextMargin">0,0,0,18</Thickness>
+    <Thickness x:Key="EmptyStateButtonMargin">4</Thickness>
+    <Thickness x:Key="DropZoneMargin">0,22,0,0</Thickness>
+    <Thickness x:Key="DropZoneTextMargin">22</Thickness>
+    <Thickness x:Key="NotificationPadding">10,14,10,10</Thickness>
+    <Thickness x:Key="NotificationMargin">12,0,12,40</Thickness>
+    <Thickness x:Key="NotificationCloseMargin">0,0,6,0</Thickness>
+    <Thickness x:Key="DialogLabelMargin">0,0,0,6</Thickness>
+    <Thickness x:Key="DialogButtonPadding">2,5,2,6</Thickness>
+    <Thickness x:Key="FocusRingMargin">-1</Thickness>
+    <Thickness x:Key="LoadingTextMargin">0,12,0,0</Thickness>
+    <Thickness x:Key="Zero">0</Thickness>
+
+    <!-- LOADING SCREEN: ring size, delay before showing it (no flash on fast openings) -->
+    <sys:Double x:Key="LoadingRingSize">32</sys:Double>
+    <sys:TimeSpan x:Key="LoadingRevealDelay">0:0:0.15</sys:TimeSpan>
+
+    <!-- OPACITY -->
+    <sys:Double x:Key="OpacityDisabled">0.4</sys:Double>
+    <sys:Double x:Key="OpacityPrimaryHover">0.92</sys:Double>
+
+    <!-- Z-ORDER (design-system.md 13) -->
+    <sys:Int32 x:Key="ZContent">0</sys:Int32>
+    <sys:Int32 x:Key="ZNarrowPane">100</sys:Int32>
+    <sys:Int32 x:Key="ZDialog">210</sys:Int32>
+    <sys:Int32 x:Key="ZSnackbar">400</sys:Int32>
+</ResourceDictionary>

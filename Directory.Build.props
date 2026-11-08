@@ -11,7 +11,7 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Company>Quentin Tiercelin</Company>
-    <Product>MdReader</Product>
+    <Product>MdStudio</Product>
     <Copyright>Copyright (c) 2026 Quentin Tiercelin</Copyright>
     <!-- AssemblyVersion, FileVersion and InformationalVersion are derived by the SDK from the project Version. -->
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
