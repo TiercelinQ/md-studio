@@ -15,9 +15,13 @@ public interface IDocumentSurface
     /// <returns>A task completed when the load message is sent.</returns>
     Task LoadAsync(string html, DocumentPageState state, CancellationToken ct);
 
-    /// <summary>Switches between reading and editing.</summary>
+    /// <summary>Switches the display mode; entering the source mode goes through <see cref="ShowSource"/>.</summary>
     /// <param name="mode">New mode.</param>
     void SetMode(DocumentMode mode);
+
+    /// <summary>Shows the raw Markdown text, editable, in place of the rendering (source mode).</summary>
+    /// <param name="text">Markdown text.</param>
+    void ShowSource(string text);
 
     /// <summary>Sets the zoom factor of the document text.</summary>
     /// <param name="zoom">Factor, 0.7 to 2.0.</param>
@@ -55,4 +59,9 @@ public interface IDocumentSurface
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The blocks in page order.</returns>
     Task<IReadOnlyList<EditedBlock>> SerializeAsync(CancellationToken ct);
+
+    /// <summary>Returns the Markdown text of the source mode, as typed (line feeds only).</summary>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>The text.</returns>
+    Task<string> GetSourceAsync(CancellationToken ct);
 }

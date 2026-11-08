@@ -32,6 +32,9 @@ Référence fonctionnelle : `../new-markdown-note/specs/cahier-des-charges-lecte
 - E-18 : cible `net10.0-windows10.0.19041.0` — reason: `WebView2CompositionControl` exige la projection Windows Runtime (sans lui, notifications et boîtes de dialogue passent sous le document).
 - E-19 : `global.json` (`dotnet test` sur Microsoft.Testing.Platform) — reason: exigence de xUnit v3 4.x avec le SDK .NET 10 ; commande `dotnet test --solution MdReader.sln`.
 - E-20 : données dans `%APPDATA%\MdReader`, partagé avec l'ancienne application du même nom — reason: choix de l'utilisateur, MdReader la remplace.
+- E-21 : interfaces existantes étendues (`IDocumentSurface`, `ITextFileService`, `IDialogService`) - reason: mode Source et création de fichier portés par les services existants, sans nouveau fichier.
+- E-22 : colonne du document sans largeur maximale (le cahier §5.4 fixe 760 px) - reason: demande de l'utilisateur.
+- E-23 : icône `IconFileNewGeometry` hors annexe A - reason: bouton « Créer un fichier », même tracé que les icônes du cahier.
 
 ## Maintenance
 

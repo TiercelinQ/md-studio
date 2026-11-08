@@ -7,7 +7,7 @@ public static class AppConfig
     public const string AppName = "MdReader";
 
     /// <summary>Application version, mirror of the project <c>Version</c> (rules/versioning.md).</summary>
-    public const string AppVersion = "1.0.0";
+    public const string AppVersion = "1.1.0";
 
     /// <summary>Accent of the light theme (design system, specification 5.2).</summary>
     public const string AccentColor = "#0067C0";

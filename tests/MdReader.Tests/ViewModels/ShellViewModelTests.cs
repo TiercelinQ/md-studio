@@ -167,7 +167,89 @@ public sealed class ShellViewModelTests
         await _shell.OpenPathAsync(Doc("x.md"), TestContext.Current.CancellationToken);
 
         Assert.Empty(_shell.Documents);
+        Assert.Null(_shell.ActiveDocument);
         _feedback.Received(1).Show(Arg.Is<ResultError>(e => e.Type == FeedbackType.Danger));
+    }
+
+    [Fact]
+    public async Task Affiche_l_onglet_en_chargement_pendant_la_lecture_du_fichier()
+    {
+        var reading = new TaskCompletionSource<Result<TextFile>>();
+        _files.ReadAsync(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns(reading.Task);
+
+        var opening = _shell.OpenPathAsync(Doc("gros.md"), TestContext.Current.CancellationToken);
+
+        var document = Assert.Single(_shell.Documents);
+        Assert.Same(document, _shell.ActiveDocument);
+        Assert.Equal("gros.md", document.FileName);
+        Assert.True(document.IsLoading);
+
+        reading.SetResult(Result<TextFile>.Success(new TextFile(document.FilePath, "texte", new TextFormat(TextEncodingKind.Utf8, LineEnding.Lf), DateTime.UtcNow, 5)));
+        await opening;
+
+        Assert.Equal("texte", document.SavedText);
+    }
+
+    [Fact]
+    public async Task Passe_en_mode_source_avec_ctrl_u()
+    {
+        await OpenAsync("a.md");
+
+        Assert.True(_shell.HandleShortcut("U", control: true, shift: false));
+
+        Assert.Equal(DocumentMode.Source, _shell.Mode);
+        Assert.True(_shell.IsSource);
+        Assert.False(_shell.IsFormatBarVisible);
+        Assert.Equal("Source", _shell.ModeText);
+    }
+
+    [Fact]
+    public async Task N_ouvre_rien_quand_la_creation_est_annulee()
+    {
+        _dialogs.PickNewMarkdownFile(Arg.Any<string?>()).Returns((string?)null);
+
+        await _shell.CreateFileCommand.ExecuteAsync(null);
+
+        Assert.Empty(_shell.Documents);
+        await _files.DidNotReceive().CreateAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Ouvre_le_fichier_cree_en_mode_edition()
+    {
+        var path = Doc("nouveau-" + Guid.NewGuid().ToString("N") + ".md");
+        _dialogs.PickNewMarkdownFile(Arg.Any<string?>()).Returns(path);
+        _files.CreateAsync(path, Arg.Any<CancellationToken>())
+            .Returns(Result<TextFile>.Success(new TextFile(path, string.Empty, new TextFormat(TextEncodingKind.Utf8, LineEnding.CrLf), DateTime.UtcNow, 0)));
+
+        await _shell.CreateFileCommand.ExecuteAsync(null);
+
+        Assert.Equal(path, Assert.Single(_shell.Documents).FilePath);
+        Assert.Equal(DocumentMode.Editing, _shell.Mode);
+    }
+
+    [Fact]
+    public async Task Ouvre_un_fichier_existant_sans_le_recreer()
+    {
+        var folder = Path.Combine(Path.GetTempPath(), "mdreader-create-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(folder);
+        try
+        {
+            var path = Path.Combine(folder, "existant.md");
+            await File.WriteAllTextAsync(path, "# Existant", TestContext.Current.CancellationToken);
+            _dialogs.PickNewMarkdownFile(Arg.Any<string?>()).Returns(path);
+
+            await _shell.CreateFileCommand.ExecuteAsync(null);
+
+            await _files.DidNotReceive().CreateAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
+            Assert.Single(_shell.Documents);
+            Assert.Equal(DocumentMode.Reading, _shell.Mode);
+            _feedback.Received(1).Show(Arg.Is<ResultError>(e => e.Type == FeedbackType.Info));
+        }
+        finally
+        {
+            Directory.Delete(folder, recursive: true);
+        }
     }
 
     private static string Doc(string name) => Path.Combine(Path.GetTempPath(), "mdreader-shell", name);

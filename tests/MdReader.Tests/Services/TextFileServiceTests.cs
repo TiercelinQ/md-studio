@@ -89,6 +89,41 @@ public sealed class TextFileServiceTests : IDisposable
         Assert.Equal(3, _service.GetSize(path).Data);
     }
 
+    [Fact]
+    public async Task Cree_un_fichier_markdown_vide_en_utf8_crlf()
+    {
+        var path = Path.Combine(_folder, "nouveau.md");
+
+        var result = await _service.CreateAsync(path, TestContext.Current.CancellationToken);
+
+        Assert.True(result.Ok);
+        Assert.Equal(new TextFormat(TextEncodingKind.Utf8, LineEnding.CrLf), result.Data!.Format);
+        Assert.Equal(0, new FileInfo(path).Length);
+    }
+
+    [Fact]
+    public async Task Refuse_de_creer_un_fichier_existant_sans_le_modifier()
+    {
+        var path = Write("existant.md", Encoding.UTF8.GetBytes("contenu"));
+
+        var result = await _service.CreateAsync(path, TestContext.Current.CancellationToken);
+
+        Assert.False(result.Ok);
+        Assert.Equal(FeedbackType.Danger, result.Error!.Type);
+        Assert.Equal("contenu", await File.ReadAllTextAsync(path, TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
+    public async Task Refuse_de_creer_un_fichier_non_markdown()
+    {
+        var path = Path.Combine(_folder, "notes.txt");
+
+        var result = await _service.CreateAsync(path, TestContext.Current.CancellationToken);
+
+        Assert.Equal(FeedbackType.Warning, result.Error!.Type);
+        Assert.False(File.Exists(path));
+    }
+
     private string Write(string name, byte[] bytes)
     {
         var path = Path.Combine(_folder, name);

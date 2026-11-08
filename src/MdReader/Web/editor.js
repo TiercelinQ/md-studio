@@ -136,6 +136,8 @@
         untracked(() => {
             doc.contentEditable = editing ? 'true' : 'false';
             doc.querySelectorAll('.mermaid-frame').forEach((frame) => { frame.contentEditable = 'false'; });
+            // An empty document (new file) gets a paragraph, so the first input is a normal block.
+            if (editing && doc.childNodes.length === 0) { doc.innerHTML = '<p><br></p>'; }
         });
         if (editing) { doc.focus(); }
     }
@@ -264,6 +266,14 @@
             default: break;
         }
     }
+
+    // ------------------------------------------------------------ source mode (raw Markdown)
+    let sourceTimer = 0;
+    document.addEventListener('input', (event) => {
+        if (event.target.id !== 'source') { return; }
+        clearTimeout(sourceTimer);
+        sourceTimer = setTimeout(() => window.mdr.send({ type: 'sourceChanged', source: window.mdr.sourceText() }), DEBOUNCE_MS);
+    });
 
     // ------------------------------------------------------------ keyboard and paste
     document.addEventListener('keydown', (event) => {

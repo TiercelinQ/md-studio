@@ -83,6 +83,10 @@ public sealed class DocumentHost : ContentControl, IDisposable
         settings.IsPasswordAutosaveEnabled = false;
         settings.IsSwipeNavigationEnabled = false;
 
+        // SmartScreen looks up every document navigation online: on the virtual host it waits for a
+        // 2-second timeout before each page (host and every tab) and contacts the network for nothing.
+        settings.IsReputationCheckingRequired = false;
+
         core.AddWebResourceRequestedFilter(Origin + "*", CoreWebView2WebResourceContext.All);
         core.WebResourceRequested += OnWebResourceRequested;
         core.NavigationStarting += (_, args) => args.Cancel = !IsAllowed(args.Uri);
@@ -278,7 +282,7 @@ public sealed class DocumentHost : ContentControl, IDisposable
     private sealed class FrameSurface(DocumentHost host, string tab) : IDocumentSurface
     {
         private readonly TaskCompletionSource _ready = new(TaskCreationOptions.RunContinuationsAsynchronously);
-        private readonly Dictionary<int, TaskCompletionSource<IReadOnlyList<EditedBlock>>> _pending = [];
+        private readonly Dictionary<int, TaskCompletionSource<PageMessage>> _pending = [];
         private int _nextRequest;
 
         public void MarkReady() => _ready.TrySetResult();
@@ -287,7 +291,7 @@ public sealed class DocumentHost : ContentControl, IDisposable
         {
             if (message.RequestId is int id && _pending.Remove(id, out var completion))
             {
-                completion.TrySetResult(message.Blocks?.Select(b => new EditedBlock(b.Src, b.Md)).ToList() ?? []);
+                completion.TrySetResult(message);
             }
         }
 
@@ -330,14 +334,28 @@ public sealed class DocumentHost : ContentControl, IDisposable
             Send(new HostMessage { Type = "focus", Tab = tab });
         }
 
+        public void ShowSource(string text) => Send(new HostMessage { Type = "showSource", Tab = tab, Source = text });
+
         public async Task<IReadOnlyList<EditedBlock>> SerializeAsync(CancellationToken ct)
+        {
+            var reply = await RequestAsync("serialize", ct);
+            return reply.Blocks?.Select(b => new EditedBlock(b.Src, b.Md)).ToList() ?? [];
+        }
+
+        public async Task<string> GetSourceAsync(CancellationToken ct)
+        {
+            var reply = await RequestAsync("getSource", ct);
+            return reply.Source ?? string.Empty;
+        }
+
+        private async Task<PageMessage> RequestAsync(string type, CancellationToken ct)
         {
             await _ready.Task.WaitAsync(ct);
             var id = ++_nextRequest;
-            var completion = new TaskCompletionSource<IReadOnlyList<EditedBlock>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var completion = new TaskCompletionSource<PageMessage>(TaskCreationOptions.RunContinuationsAsynchronously);
             _pending[id] = completion;
             using var registration = ct.Register(() => completion.TrySetCanceled(ct));
-            host.Post(new HostMessage { Type = "serialize", Tab = tab, RequestId = id });
+            host.Post(new HostMessage { Type = type, Tab = tab, RequestId = id });
             return await completion.Task;
         }
 

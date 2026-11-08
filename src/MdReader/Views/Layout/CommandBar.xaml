@@ -17,6 +17,16 @@
 
             <StackPanel Style="{StaticResource CommandGroupStyle}">
                 <Button
+                    AutomationProperties.Name="{x:Static res:Strings.Command_CreateFile}"
+                    Command="{Binding CreateFileCommand}"
+                    Style="{StaticResource CommandButtonStyle}"
+                    ToolTip="{x:Static res:Strings.Command_CreateFile_Tooltip}">
+                    <StackPanel Orientation="Horizontal">
+                        <ContentControl Style="{StaticResource IconAccentStyle}" Tag="{StaticResource IconFileNewGeometry}" />
+                        <TextBlock Style="{StaticResource CommandLabelStyle}" Text="{x:Static res:Strings.Command_CreateFile}" />
+                    </StackPanel>
+                </Button>
+                <Button
                     AutomationProperties.Name="{x:Static res:Strings.Command_OpenFile}"
                     Command="{Binding OpenFileCommand}"
                     Style="{StaticResource CommandButtonStyle}"
@@ -51,6 +61,7 @@
                 <Border AutomationProperties.Name="{x:Static res:Strings.Mode_Group}" Style="{StaticResource SegmentContainerStyle}">
                     <StackPanel Orientation="Horizontal">
                         <RadioButton
+                            AutomationProperties.Name="{x:Static res:Strings.Mode_Reading}"
                             GroupName="Mode"
                             IsChecked="{Binding IsReading, Mode=TwoWay}"
                             IsEnabled="{Binding HasDocument}"
@@ -62,6 +73,7 @@
                             </StackPanel>
                         </RadioButton>
                         <RadioButton
+                            AutomationProperties.Name="{x:Static res:Strings.Mode_Editing}"
                             GroupName="Mode"
                             IsChecked="{Binding IsEditing, Mode=TwoWay}"
                             IsEnabled="{Binding HasDocument}"
@@ -70,6 +82,18 @@
                             <StackPanel Orientation="Horizontal">
                                 <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconEditGeometry}" />
                                 <TextBlock Style="{StaticResource SegmentLabelStyle}" Text="{x:Static res:Strings.Mode_Editing}" />
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton
+                            AutomationProperties.Name="{x:Static res:Strings.Mode_Source}"
+                            GroupName="Mode"
+                            IsChecked="{Binding IsSource, Mode=TwoWay}"
+                            IsEnabled="{Binding HasDocument}"
+                            Style="{StaticResource SegmentRadioStyle}"
+                            ToolTip="{x:Static res:Strings.Mode_Source_Tooltip}">
+                            <StackPanel Orientation="Horizontal">
+                                <ContentControl Style="{StaticResource IconStyle}" Tag="{StaticResource IconCodeGeometry}" />
+                                <TextBlock Style="{StaticResource SegmentLabelStyle}" Text="{x:Static res:Strings.Mode_Source}" />
                             </StackPanel>
                         </RadioButton>
                     </StackPanel>
