@@ -25,7 +25,7 @@ public interface IFolderScanService
 /// <param name="logger">Logger.</param>
 public sealed partial class FolderScanService(ILogger<FolderScanService> logger) : IFolderScanService
 {
-    private static readonly CompositeFormat FolderUnreadableFormat = CompositeFormat.Parse(Strings.Error_FolderUnreadable);
+    private static readonly CompositeFormat FolderUnreadableFormat = CompositeFormat.Parse(Strings.Toast_FolderUnreadable_Message);
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "Dossier illisible {Root}")]
     private static partial void LogFolderUnreadable(ILogger logger, Exception? exception, string root);
@@ -56,6 +56,7 @@ public sealed partial class FolderScanService(ILogger<FolderScanService> logger)
             LogFolderUnreadable(logger, ex, root);
             return Result<FileNode>.Failure(new ResultError(
                 FeedbackType.Danger,
+                Strings.Toast_FolderUnreadable_Title,
                 string.Format(CultureInfo.CurrentCulture, FolderUnreadableFormat, Path.GetFileName(root))));
         }
     }

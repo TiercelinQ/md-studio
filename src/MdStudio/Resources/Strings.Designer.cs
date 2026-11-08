@@ -127,36 +127,6 @@ public static class Strings
     /// <summary>Gets the text "UTF-8 avec BOM".</summary>
     public static string Encoding_Utf8Bom => Get("Encoding_Utf8Bom");
 
-    /// <summary>Gets the text "Impossible de créer {0}.".</summary>
-    public static string Error_CreateFailed => Get("Error_CreateFailed");
-
-    /// <summary>Gets the text "Impossible de lire le dossier {0}.".</summary>
-    public static string Error_FolderUnreadable => Get("Error_FolderUnreadable");
-
-    /// <summary>Gets the text "Lien non pris en charge : {0}".</summary>
-    public static string Error_LinkRefused => Get("Error_LinkRefused");
-
-    /// <summary>Gets the text "{0} est introuvable.".</summary>
-    public static string Error_NotFound => Get("Error_NotFound");
-
-    /// <summary>Gets the text "{0} n’est pas un fichier Markdown (.md ou .markdown).".</summary>
-    public static string Error_NotMarkdown => Get("Error_NotMarkdown");
-
-    /// <summary>Gets the text "{0} n’est pas un fichier texte lisible.".</summary>
-    public static string Error_NotText => Get("Error_NotText");
-
-    /// <summary>Gets the text "Impossible d’ouvrir {0}. Accès refusé.".</summary>
-    public static string Error_OpenDenied => Get("Error_OpenDenied");
-
-    /// <summary>Gets the text "Impossible d’enregistrer {0}.".</summary>
-    public static string Error_SaveFailed => Get("Error_SaveFailed");
-
-    /// <summary>Gets the text "Une erreur inattendue s’est produite.".</summary>
-    public static string Error_Unexpected => Get("Error_Unexpected");
-
-    /// <summary>Gets the text "Le moteur d’affichage WebView2 a rencontré une erreur.".</summary>
-    public static string Error_WebView => Get("Error_WebView");
-
     /// <summary>Gets the text "Réduire l’explorateur".</summary>
     public static string Explorer_Collapse => Get("Explorer_Collapse");
 
@@ -295,15 +265,6 @@ public static class Strings
     /// <summary>Gets the text "Ouvrir un fichier (Ctrl+O)".</summary>
     public static string NewTab_Tooltip => Get("NewTab_Tooltip");
 
-    /// <summary>Gets the text "Diagramme validé. Le moteur Mermaid remplace l’aperçu.".</summary>
-    public static string Notify_DiagramValidated => Get("Notify_DiagramValidated");
-
-    /// <summary>Gets the text "{0} existe déjà : le fichier est ouvert.".</summary>
-    public static string Notify_FileExists => Get("Notify_FileExists");
-
-    /// <summary>Gets the text "Enregistré : {0}".</summary>
-    public static string Notify_Saved => Get("Notify_Saved");
-
     /// <summary>Gets the text "Aucun document ouvert.".</summary>
     public static string Outline_Empty => Get("Outline_Empty");
 
@@ -369,6 +330,111 @@ public static class Strings
 
     /// <summary>Gets the text "Documents ouverts".</summary>
     public static string Tabs_Name => Get("Tabs_Name");
+
+    /// <summary>Gets the text "Copier le détail".</summary>
+    public static string Toast_Action_CopyDetail => Get("Toast_Action_CopyDetail");
+
+    /// <summary>Gets the text "Réessayer".</summary>
+    public static string Toast_Action_Retry => Get("Toast_Action_Retry");
+
+    /// <summary>Gets the text "Fermer la notification".</summary>
+    public static string Toast_Close => Get("Toast_Close");
+
+    /// <summary>Gets the text "{0} n’a pas pu être créé. Vérifiez les droits d’écriture du dossier.".</summary>
+    public static string Toast_CreateFailed_Message => Get("Toast_CreateFailed_Message");
+
+    /// <summary>Gets the text "Création impossible".</summary>
+    public static string Toast_CreateFailed_Title => Get("Toast_CreateFailed_Title");
+
+    /// <summary>Gets the text "L’aperçu Mermaid est mis à jour.".</summary>
+    public static string Toast_DiagramValidated_Message => Get("Toast_DiagramValidated_Message");
+
+    /// <summary>Gets the text "Diagramme validé".</summary>
+    public static string Toast_DiagramValidated_Title => Get("Toast_DiagramValidated_Title");
+
+    /// <summary>Gets the text "{0} existe déjà : il est ouvert sans modification.".</summary>
+    public static string Toast_FileExists_Message => Get("Toast_FileExists_Message");
+
+    /// <summary>Gets the text "Fichier déjà existant".</summary>
+    public static string Toast_FileExists_Title => Get("Toast_FileExists_Title");
+
+    /// <summary>Gets the text "Le dossier {0} n’a pas pu être lu : accès refusé ou dossier déplacé.".</summary>
+    public static string Toast_FolderUnreadable_Message => Get("Toast_FolderUnreadable_Message");
+
+    /// <summary>Gets the text "Dossier illisible".</summary>
+    public static string Toast_FolderUnreadable_Title => Get("Toast_FolderUnreadable_Title");
+
+    /// <summary>Gets the text "Erreur".</summary>
+    public static string Toast_Kind_Error => Get("Toast_Kind_Error");
+
+    /// <summary>Gets the text "Information".</summary>
+    public static string Toast_Kind_Info => Get("Toast_Kind_Info");
+
+    /// <summary>Gets the text "Succès".</summary>
+    public static string Toast_Kind_Success => Get("Toast_Kind_Success");
+
+    /// <summary>Gets the text "Avertissement".</summary>
+    public static string Toast_Kind_Warning => Get("Toast_Kind_Warning");
+
+    /// <summary>Gets the text "Lien non ouvert".</summary>
+    public static string Toast_LinkNotOpened_Title => Get("Toast_LinkNotOpened_Title");
+
+    /// <summary>Gets the text "{0} n’est pas une adresse web http ou https.".</summary>
+    public static string Toast_LinkRefused_Message => Get("Toast_LinkRefused_Message");
+
+    /// <summary>Gets the text "Aucun navigateur n’a pu ouvrir {0}.".</summary>
+    public static string Toast_NoBrowser_Message => Get("Toast_NoBrowser_Message");
+
+    /// <summary>Gets the text "{0} a été déplacé ou supprimé.".</summary>
+    public static string Toast_NotFound_Message => Get("Toast_NotFound_Message");
+
+    /// <summary>Gets the text "Fichier introuvable".</summary>
+    public static string Toast_NotFound_Title => Get("Toast_NotFound_Title");
+
+    /// <summary>Gets the text "{0} n’est pas un fichier .md ou .markdown. Choisissez l’une de ces extensions.".</summary>
+    public static string Toast_NotMarkdown_Message => Get("Toast_NotMarkdown_Message");
+
+    /// <summary>Gets the text "Extension non prise en charge".</summary>
+    public static string Toast_NotMarkdown_Title => Get("Toast_NotMarkdown_Title");
+
+    /// <summary>Gets the text "{0} n’est pas un fichier texte. Seuls les fichiers Markdown en texte s’ouvrent.".</summary>
+    public static string Toast_NotText_Message => Get("Toast_NotText_Message");
+
+    /// <summary>Gets the text "Fichier illisible".</summary>
+    public static string Toast_NotText_Title => Get("Toast_NotText_Title");
+
+    /// <summary>Gets the text "{0} ne peut pas être ouvert : droits de lecture insuffisants.".</summary>
+    public static string Toast_OpenDenied_Message => Get("Toast_OpenDenied_Message");
+
+    /// <summary>Gets the text "Accès refusé".</summary>
+    public static string Toast_OpenDenied_Title => Get("Toast_OpenDenied_Title");
+
+    /// <summary>Gets the text "Notifications".</summary>
+    public static string Toast_Region => Get("Toast_Region");
+
+    /// <summary>Gets the text "{0} n’a pas pu être écrit. Vérifiez les droits du dossier, puis réessayez.".</summary>
+    public static string Toast_SaveFailed_Message => Get("Toast_SaveFailed_Message");
+
+    /// <summary>Gets the text "Enregistrement impossible".</summary>
+    public static string Toast_SaveFailed_Title => Get("Toast_SaveFailed_Title");
+
+    /// <summary>Gets the text "{0} est enregistré sur le disque.".</summary>
+    public static string Toast_Saved_Message => Get("Toast_Saved_Message");
+
+    /// <summary>Gets the text "Document enregistré".</summary>
+    public static string Toast_Saved_Title => Get("Toast_Saved_Title");
+
+    /// <summary>Gets the text "{0}. Le détail complet est enregistré dans le journal.".</summary>
+    public static string Toast_Unexpected_Message => Get("Toast_Unexpected_Message");
+
+    /// <summary>Gets the text "Erreur inattendue".</summary>
+    public static string Toast_Unexpected_Title => Get("Toast_Unexpected_Title");
+
+    /// <summary>Gets the text "Le moteur d’affichage WebView2 a rencontré une erreur. Fermez puis relancez MdStudio.".</summary>
+    public static string Toast_WebView_Message => Get("Toast_WebView_Message");
+
+    /// <summary>Gets the text "Affichage indisponible".</summary>
+    public static string Toast_WebView_Title => Get("Toast_WebView_Title");
 
     /// <summary>Gets the text "{0} mots".</summary>
     public static string Words_Many => Get("Words_Many");

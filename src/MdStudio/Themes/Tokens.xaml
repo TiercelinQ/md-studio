@@ -166,9 +166,6 @@
     <Thickness x:Key="EmptyStateButtonMargin">4</Thickness>
     <Thickness x:Key="DropZoneMargin">0,22,0,0</Thickness>
     <Thickness x:Key="DropZoneTextMargin">22</Thickness>
-    <Thickness x:Key="NotificationPadding">10,14,10,10</Thickness>
-    <Thickness x:Key="NotificationMargin">12,0,12,40</Thickness>
-    <Thickness x:Key="NotificationCloseMargin">0,0,6,0</Thickness>
     <Thickness x:Key="DialogLabelMargin">0,0,0,6</Thickness>
     <Thickness x:Key="DialogButtonPadding">2,5,2,6</Thickness>
     <Thickness x:Key="FocusRingMargin">-1</Thickness>
@@ -179,6 +176,44 @@
     <sys:Double x:Key="LoadingRingSize">32</sys:Double>
     <sys:TimeSpan x:Key="LoadingRevealDelay">0:0:0.15</sys:TimeSpan>
 
+    <!-- TOASTS (toast specification 3, 4.1, 4.2, 5.3, 5.4, 5.6) -->
+    <sys:Double x:Key="ToastWidth">388</sys:Double>
+    <sys:Double x:Key="ToastAreaMargin">16</sys:Double>
+    <Thickness x:Key="ToastGap">0,8,0,0</Thickness>
+    <CornerRadius x:Key="ToastCornerRadius">8</CornerRadius>
+    <Thickness x:Key="ToastPadding">12,12,8,14</Thickness>
+    <Thickness x:Key="ToastErrorBorderWidth">1.5</Thickness>
+    <GridLength x:Key="ToastBadgeColumn">36</GridLength>
+    <GridLength x:Key="ToastColumnGap">12</GridLength>
+    <GridLength x:Key="ToastCloseColumn">28</GridLength>
+    <sys:Double x:Key="ToastBadgeSize">32</sys:Double>
+    <Thickness x:Key="ToastBadgeMargin">0,2,0,0</Thickness>
+    <CornerRadius x:Key="ToastBadgeCircle">16</CornerRadius>
+    <Thickness x:Key="ToastBadgeRing">2</Thickness>
+    <sys:Double x:Key="ToastIconGrid">20</sys:Double>
+    <sys:Double x:Key="ToastBadgeIconSize">18</sys:Double>
+    <sys:Double x:Key="ToastBadgeIconStroke">2</sys:Double>
+    <sys:Double x:Key="ToastCloseSize">28</sys:Double>
+    <sys:Double x:Key="ToastCloseIconSize">12</sys:Double>
+    <sys:Double x:Key="ToastCloseIconStroke">1.8</sys:Double>
+    <sys:Double x:Key="ToastActionHeight">28</sys:Double>
+    <Thickness x:Key="ToastActionPadding">12,0</Thickness>
+    <Thickness x:Key="ToastActionGap">0,0,6,0</Thickness>
+    <Thickness x:Key="ToastActionsMargin">0,10,0,0</Thickness>
+    <sys:Double x:Key="ToastTimerHeight">3</sys:Double>
+    <sys:Double x:Key="ToastKickerSize">11</sys:Double>
+    <sys:Double x:Key="ToastKickerLineHeight">15.4</sys:Double>
+    <sys:Double x:Key="ToastTitleSize">13.5</sys:Double>
+    <sys:Double x:Key="ToastTitleLineHeight">18.9</sys:Double>
+    <sys:Double x:Key="ToastMessageLineHeight">17.5</sys:Double>
+    <Thickness x:Key="ToastMessageMargin">0,1,0,0</Thickness>
+    <FontWeight x:Key="FontWeightBold">Bold</FontWeight>
+    <sys:Double x:Key="ToastEnterOffset">32</sys:Double>
+    <sys:Double x:Key="ToastExitOffset">24</sys:Double>
+    <Duration x:Key="ToastEnterDuration">0:0:0.24</Duration>
+    <Duration x:Key="ToastExitDuration">0:0:0.18</Duration>
+    <KeySpline x:Key="ToastEnterSpline">0.2,0.8,0.2,1</KeySpline>
+
     <!-- OPACITY -->
     <sys:Double x:Key="OpacityDisabled">0.4</sys:Double>
     <sys:Double x:Key="OpacityPrimaryHover">0.92</sys:Double>
@@ -187,5 +222,5 @@
     <sys:Int32 x:Key="ZContent">0</sys:Int32>
     <sys:Int32 x:Key="ZNarrowPane">100</sys:Int32>
     <sys:Int32 x:Key="ZDialog">210</sys:Int32>
-    <sys:Int32 x:Key="ZSnackbar">400</sys:Int32>
+    <sys:Int32 x:Key="ZToast">400</sys:Int32>
 </ResourceDictionary>

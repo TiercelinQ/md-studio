@@ -41,16 +41,6 @@
   <data name="Encoding_Utf16Le" xml:space="preserve"><value>UTF-16 LE</value></data>
   <data name="Encoding_Utf8" xml:space="preserve"><value>UTF-8</value></data>
   <data name="Encoding_Utf8Bom" xml:space="preserve"><value>UTF-8 avec BOM</value></data>
-  <data name="Error_CreateFailed" xml:space="preserve"><value>Impossible de créer {0}.</value></data>
-  <data name="Error_FolderUnreadable" xml:space="preserve"><value>Impossible de lire le dossier {0}.</value></data>
-  <data name="Error_LinkRefused" xml:space="preserve"><value>Lien non pris en charge : {0}</value></data>
-  <data name="Error_NotFound" xml:space="preserve"><value>{0} est introuvable.</value></data>
-  <data name="Error_NotMarkdown" xml:space="preserve"><value>{0} n’est pas un fichier Markdown (.md ou .markdown).</value></data>
-  <data name="Error_NotText" xml:space="preserve"><value>{0} n’est pas un fichier texte lisible.</value></data>
-  <data name="Error_OpenDenied" xml:space="preserve"><value>Impossible d’ouvrir {0}. Accès refusé.</value></data>
-  <data name="Error_SaveFailed" xml:space="preserve"><value>Impossible d’enregistrer {0}.</value></data>
-  <data name="Error_Unexpected" xml:space="preserve"><value>Une erreur inattendue s’est produite.</value></data>
-  <data name="Error_WebView" xml:space="preserve"><value>Le moteur d’affichage WebView2 a rencontré une erreur.</value></data>
   <data name="Explorer_Collapse" xml:space="preserve"><value>Réduire l’explorateur</value></data>
   <data name="Explorer_EmptyFolder" xml:space="preserve"><value>Aucun fichier Markdown dans ce dossier.</value></data>
   <data name="Explorer_Filter" xml:space="preserve"><value>Filtrer les fichiers</value></data>
@@ -97,9 +87,6 @@
   <data name="Mode_Source_Tooltip" xml:space="preserve"><value>Source (Ctrl+U)</value></data>
   <data name="NewFile_DefaultName" xml:space="preserve"><value>Sans titre.md</value></data>
   <data name="NewTab_Tooltip" xml:space="preserve"><value>Ouvrir un fichier (Ctrl+O)</value></data>
-  <data name="Notify_DiagramValidated" xml:space="preserve"><value>Diagramme validé. Le moteur Mermaid remplace l’aperçu.</value></data>
-  <data name="Notify_FileExists" xml:space="preserve"><value>{0} existe déjà : le fichier est ouvert.</value></data>
-  <data name="Notify_Saved" xml:space="preserve"><value>Enregistré : {0}</value></data>
   <data name="Outline_Empty" xml:space="preserve"><value>Aucun document ouvert.</value></data>
   <data name="Outline_Title" xml:space="preserve"><value>Plan du document</value></data>
   <data name="Search_Close" xml:space="preserve"><value>Fermer la recherche</value></data>
@@ -122,6 +109,41 @@
   <data name="Tab_Close_Format" xml:space="preserve"><value>Fermer {0}</value></data>
   <data name="Tab_Modified" xml:space="preserve"><value>Modifié</value></data>
   <data name="Tabs_Name" xml:space="preserve"><value>Documents ouverts</value></data>
+  <data name="Toast_Action_CopyDetail" xml:space="preserve"><value>Copier le détail</value></data>
+  <data name="Toast_Action_Retry" xml:space="preserve"><value>Réessayer</value></data>
+  <data name="Toast_Close" xml:space="preserve"><value>Fermer la notification</value></data>
+  <data name="Toast_CreateFailed_Message" xml:space="preserve"><value>{0} n’a pas pu être créé. Vérifiez les droits d’écriture du dossier.</value></data>
+  <data name="Toast_CreateFailed_Title" xml:space="preserve"><value>Création impossible</value></data>
+  <data name="Toast_DiagramValidated_Message" xml:space="preserve"><value>L’aperçu Mermaid est mis à jour.</value></data>
+  <data name="Toast_DiagramValidated_Title" xml:space="preserve"><value>Diagramme validé</value></data>
+  <data name="Toast_FileExists_Message" xml:space="preserve"><value>{0} existe déjà : il est ouvert sans modification.</value></data>
+  <data name="Toast_FileExists_Title" xml:space="preserve"><value>Fichier déjà existant</value></data>
+  <data name="Toast_FolderUnreadable_Message" xml:space="preserve"><value>Le dossier {0} n’a pas pu être lu : accès refusé ou dossier déplacé.</value></data>
+  <data name="Toast_FolderUnreadable_Title" xml:space="preserve"><value>Dossier illisible</value></data>
+  <data name="Toast_Kind_Error" xml:space="preserve"><value>Erreur</value></data>
+  <data name="Toast_Kind_Info" xml:space="preserve"><value>Information</value></data>
+  <data name="Toast_Kind_Success" xml:space="preserve"><value>Succès</value></data>
+  <data name="Toast_Kind_Warning" xml:space="preserve"><value>Avertissement</value></data>
+  <data name="Toast_LinkNotOpened_Title" xml:space="preserve"><value>Lien non ouvert</value></data>
+  <data name="Toast_LinkRefused_Message" xml:space="preserve"><value>{0} n’est pas une adresse web http ou https.</value></data>
+  <data name="Toast_NoBrowser_Message" xml:space="preserve"><value>Aucun navigateur n’a pu ouvrir {0}.</value></data>
+  <data name="Toast_NotFound_Message" xml:space="preserve"><value>{0} a été déplacé ou supprimé.</value></data>
+  <data name="Toast_NotFound_Title" xml:space="preserve"><value>Fichier introuvable</value></data>
+  <data name="Toast_NotMarkdown_Message" xml:space="preserve"><value>{0} n’est pas un fichier .md ou .markdown. Choisissez l’une de ces extensions.</value></data>
+  <data name="Toast_NotMarkdown_Title" xml:space="preserve"><value>Extension non prise en charge</value></data>
+  <data name="Toast_NotText_Message" xml:space="preserve"><value>{0} n’est pas un fichier texte. Seuls les fichiers Markdown en texte s’ouvrent.</value></data>
+  <data name="Toast_NotText_Title" xml:space="preserve"><value>Fichier illisible</value></data>
+  <data name="Toast_OpenDenied_Message" xml:space="preserve"><value>{0} ne peut pas être ouvert : droits de lecture insuffisants.</value></data>
+  <data name="Toast_OpenDenied_Title" xml:space="preserve"><value>Accès refusé</value></data>
+  <data name="Toast_Region" xml:space="preserve"><value>Notifications</value></data>
+  <data name="Toast_SaveFailed_Message" xml:space="preserve"><value>{0} n’a pas pu être écrit. Vérifiez les droits du dossier, puis réessayez.</value></data>
+  <data name="Toast_SaveFailed_Title" xml:space="preserve"><value>Enregistrement impossible</value></data>
+  <data name="Toast_Saved_Message" xml:space="preserve"><value>{0} est enregistré sur le disque.</value></data>
+  <data name="Toast_Saved_Title" xml:space="preserve"><value>Document enregistré</value></data>
+  <data name="Toast_Unexpected_Message" xml:space="preserve"><value>{0}. Le détail complet est enregistré dans le journal.</value></data>
+  <data name="Toast_Unexpected_Title" xml:space="preserve"><value>Erreur inattendue</value></data>
+  <data name="Toast_WebView_Message" xml:space="preserve"><value>Le moteur d’affichage WebView2 a rencontré une erreur. Fermez puis relancez MdStudio.</value></data>
+  <data name="Toast_WebView_Title" xml:space="preserve"><value>Affichage indisponible</value></data>
   <data name="Words_Many" xml:space="preserve"><value>{0} mots</value></data>
   <data name="Words_One" xml:space="preserve"><value>{0} mot</value></data>
   <data name="Zoom_In" xml:space="preserve"><value>Augmenter le zoom</value></data>

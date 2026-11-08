@@ -162,7 +162,7 @@ public sealed class ShellViewModelTests
     public async Task Signale_un_fichier_illisible_sans_ouvrir_d_onglet()
     {
         _files.ReadAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns(Result<TextFile>.Failure(new ResultError(FeedbackType.Danger, "illisible")));
+            .Returns(Result<TextFile>.Failure(new ResultError(FeedbackType.Danger, "Fichier illisible", "x.md n'est pas un fichier texte.")));
 
         await _shell.OpenPathAsync(Doc("x.md"), TestContext.Current.CancellationToken);
 

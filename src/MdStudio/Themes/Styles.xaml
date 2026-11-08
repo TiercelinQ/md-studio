@@ -1376,71 +1376,258 @@
     </Style>
 
     <!-- ============================================================
-         FEEDBACK: notification (C-18) and dialog (C-19)
+         FEEDBACK: toasts (toast specification, deviation E-05) and dialog (C-19)
          ============================================================ -->
 
-    <!-- Notification anchor: bottom center, 40 from the bottom (layout.md 5, E-05). Token: NotificationMargin -->
-    <Style x:Key="NotificationPresenterStyle" TargetType="ui:SnackbarPresenter">
-        <Setter Property="HorizontalAlignment" Value="Center" />
+    <!-- Toast area: bottom right, polite live region (TS-60); width and margins set at run time by ToastHost (TS-11, TS-16) -->
+    <Style x:Key="ToastHostStyle" TargetType="UserControl">
+        <Setter Property="HorizontalAlignment" Value="Right" />
         <Setter Property="VerticalAlignment" Value="Bottom" />
-        <Setter Property="Margin" Value="{StaticResource NotificationMargin}" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="AutomationProperties.LiveSetting" Value="Polite" />
     </Style>
 
-    <!-- C-18 notification: DocBrush, Stroke2Brush, CornerRadiusMd, BorderWidthAccent bar in AccentBrush
-         (DangerBrush for an error), FontSizeBody, close button only for errors, no icon (E-05) -->
-    <Style x:Key="NotificationStyle" BasedOn="{StaticResource {x:Type ui:Snackbar}}" TargetType="ui:Snackbar">
-        <Setter Property="AutomationProperties.LiveSetting" Value="Polite" />
+    <!-- One toast: ToastGap above; announced Polite (success, info) or Assertive (warning, error) (TS-61) -->
+    <Style x:Key="ToastViewStyle" TargetType="UserControl">
+        <Setter Property="Margin" Value="{StaticResource ToastGap}" />
         <Setter Property="Focusable" Value="False" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ui:Snackbar">
-                    <Border
-                        Background="{DynamicResource DocBrush}"
-                        BorderBrush="{DynamicResource Stroke2Brush}"
-                        BorderThickness="{StaticResource BorderWidth}"
-                        CornerRadius="{StaticResource CornerRadiusMd}"
-                        RenderTransform="{TemplateBinding SlideTransform}">
-                        <DockPanel>
-                            <Border
-                                x:Name="AccentBar"
-                                Width="{StaticResource BorderWidthAccent}"
-                                Background="{DynamicResource AccentBrush}"
-                                CornerRadius="{StaticResource CornerRadiusAccentLeft}"
-                                DockPanel.Dock="Left" />
-                            <Button
-                                x:Name="CloseButton"
-                                Margin="{StaticResource NotificationCloseMargin}"
-                                AutomationProperties.Name="{x:Static res:Strings.Search_Close_Tooltip}"
-                                Command="{Binding TemplateButtonCommand, RelativeSource={RelativeSource TemplatedParent}}"
-                                DockPanel.Dock="Right"
-                                Style="{StaticResource ToolButtonSmallStyle}"
-                                Visibility="Collapsed">
-                                <ContentControl Style="{StaticResource IconSmallStyle}" Tag="{StaticResource IconCloseGeometry}" />
-                            </Button>
-                            <ContentPresenter
-                                Margin="{StaticResource NotificationPadding}"
-                                VerticalAlignment="Center"
-                                TextElement.FontSize="{StaticResource FontSizeBody}"
-                                TextElement.Foreground="{DynamicResource FgBrush}">
-                                <ContentPresenter.Resources>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="TextWrapping" Value="Wrap" />
-                                    </Style>
-                                </ContentPresenter.Resources>
-                            </ContentPresenter>
-                        </DockPanel>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="Appearance" Value="Danger">
-                            <Setter TargetName="AccentBar" Property="Background" Value="{DynamicResource DangerBrush}" />
-                        </Trigger>
-                        <Trigger Property="IsCloseButtonEnabled" Value="True">
-                            <Setter TargetName="CloseButton" Property="Visibility" Value="Visible" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleText}" />
+        <Setter Property="AutomationProperties.LiveSetting" Value="Polite" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsAlert}" Value="True">
+                <Setter Property="AutomationProperties.LiveSetting" Value="Assertive" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Toast mask: the toast shape, so the content and the timer bar are clipped to the rounded corners (5.3). ToastCornerRadius -->
+    <Style x:Key="ToastMaskStyle" TargetType="Border">
+        <Setter Property="CornerRadius" Value="{StaticResource ToastCornerRadius}" />
+        <Setter Property="Background" Value="{DynamicResource DocBrush}" />
+    </Style>
+
+    <!-- Toast surface: opaque background (TS-30), border 1 (1.5 in ErrBrush for an error, TS-32), no shadow (E-25).
+         Tokens: ToastCornerRadius, ToastPadding, BorderWidth, ToastErrorBorderWidth; *BgBrush, *BdBrush -->
+    <Style x:Key="ToastSurfaceStyle" TargetType="Border">
+        <Setter Property="CornerRadius" Value="{StaticResource ToastCornerRadius}" />
+        <Setter Property="Padding" Value="{StaticResource ToastPadding}" />
+        <Setter Property="BorderThickness" Value="{StaticResource BorderWidth}" />
+        <Setter Property="Background" Value="{DynamicResource InfBgBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource InfBdBrush}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Type}" Value="Success">
+                <Setter Property="Background" Value="{DynamicResource OkBgBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource OkBdBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}" Value="Warning">
+                <Setter Property="Background" Value="{DynamicResource WarnBgBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource WarnBdBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}" Value="Danger">
+                <Setter Property="Background" Value="{DynamicResource ErrBgBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource ErrBrush}" />
+                <Setter Property="BorderThickness" Value="{StaticResource ToastErrorBorderWidth}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Toast badge 32: circle, rounded square (CornerRadiusBadge) for a warning; ring 2 in InfBrush without fill for an
+         information (5.2). Tokens: ToastBadgeSize, ToastBadgeMargin, ToastBadgeCircle, ToastBadgeRing; *FillBrush -->
+    <Style x:Key="ToastBadgeStyle" TargetType="Border">
+        <Setter Property="Width" Value="{StaticResource ToastBadgeSize}" />
+        <Setter Property="Height" Value="{StaticResource ToastBadgeSize}" />
+        <Setter Property="Margin" Value="{StaticResource ToastBadgeMargin}" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="CornerRadius" Value="{StaticResource ToastBadgeCircle}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource InfBrush}" />
+        <Setter Property="BorderThickness" Value="{StaticResource ToastBadgeRing}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Type}" Value="Success">
+                <Setter Property="Background" Value="{DynamicResource OkFillBrush}" />
+                <Setter Property="BorderThickness" Value="{StaticResource Zero}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}" Value="Warning">
+                <Setter Property="Background" Value="{DynamicResource WarnFillBrush}" />
+                <Setter Property="BorderThickness" Value="{StaticResource Zero}" />
+                <Setter Property="CornerRadius" Value="{StaticResource CornerRadiusBadge}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}" Value="Danger">
+                <Setter Property="Background" Value="{DynamicResource ErrFillBrush}" />
+                <Setter Property="BorderThickness" Value="{StaticResource Zero}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Toast icons: Viewbox + Path on the 20 grid (5.4), stroke ToastBadgeIconStroke or ToastCloseIconStroke -->
+    <ControlTemplate x:Key="ToastBadgeIconTemplate" TargetType="ContentControl">
+        <Viewbox Stretch="Uniform">
+            <Path
+                Width="{StaticResource ToastIconGrid}"
+                Height="{StaticResource ToastIconGrid}"
+                Data="{TemplateBinding Tag}"
+                Stroke="{TemplateBinding Foreground}"
+                StrokeEndLineCap="Round"
+                StrokeLineJoin="Round"
+                StrokeStartLineCap="Round"
+                StrokeThickness="{StaticResource ToastBadgeIconStroke}" />
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="ToastCloseIconTemplate" TargetType="ContentControl">
+        <Viewbox Stretch="Uniform">
+            <Path
+                Width="{StaticResource ToastIconGrid}"
+                Height="{StaticResource ToastIconGrid}"
+                Data="{TemplateBinding Tag}"
+                Stroke="{TemplateBinding Foreground}"
+                StrokeEndLineCap="Round"
+                StrokeLineJoin="Round"
+                StrokeStartLineCap="Round"
+                StrokeThickness="{StaticResource ToastCloseIconStroke}" />
+        </Viewbox>
+    </ControlTemplate>
+
+    <!-- Badge icon 18 by type: check, "i", exclamation mark, cross; *OnBrush, InfBrush for an information -->
+    <Style x:Key="ToastBadgeIconStyle" TargetType="ContentControl">
+        <Setter Property="Width" Value="{StaticResource ToastBadgeIconSize}" />
+        <Setter Property="Height" Value="{StaticResource ToastBadgeIconSize}" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Template" Value="{StaticResource ToastBadgeIconTemplate}" />
+        <Setter Property="Foreground" Value="{DynamicResource InfBrush}" />
+        <Setter Property="Tag" Value="{StaticResource ToastInfoGeometry}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Type}" Value="Success">
+                <Setter Property="Foreground" Value="{DynamicResource OkOnBrush}" />
+                <Setter Property="Tag" Value="{StaticResource ToastCheckGeometry}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}" Value="Warning">
+                <Setter Property="Foreground" Value="{DynamicResource WarnOnBrush}" />
+                <Setter Property="Tag" Value="{StaticResource ToastWarningGeometry}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}" Value="Danger">
+                <Setter Property="Foreground" Value="{DynamicResource ErrOnBrush}" />
+                <Setter Property="Tag" Value="{StaticResource ToastCrossGeometry}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Kicker: ToastKickerSize, bold, color of the type (Ok/Inf/Warn/ErrBrush); capitals set by the ViewModel (E-26) -->
+    <Style x:Key="ToastKickerStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource ToastKickerSize}" />
+        <Setter Property="LineHeight" Value="{StaticResource ToastKickerLineHeight}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightBold}" />
+        <Setter Property="Foreground" Value="{DynamicResource InfBrush}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Type}" Value="Success">
+                <Setter Property="Foreground" Value="{DynamicResource OkBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}" Value="Warning">
+                <Setter Property="Foreground" Value="{DynamicResource WarnBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}" Value="Danger">
+                <Setter Property="Foreground" Value="{DynamicResource ErrBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Title: ToastTitleSize, semibold, FgBrush, wrapping, no trimming -->
+    <Style x:Key="ToastTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource ToastTitleSize}" />
+        <Setter Property="LineHeight" Value="{StaticResource ToastTitleLineHeight}" />
+        <Setter Property="FontWeight" Value="{StaticResource FontWeightSemiBold}" />
+        <Setter Property="Foreground" Value="{DynamicResource FgBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <!-- Message: FontSizeSmall, Fg2Brush, ToastMessageMargin, wrapping, no trimming -->
+    <Style x:Key="ToastMessageStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+        <Setter Property="LineHeight" Value="{StaticResource ToastMessageLineHeight}" />
+        <Setter Property="Margin" Value="{StaticResource ToastMessageMargin}" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg2Brush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <!-- Close button 28: transparent, Fg2Brush icon, HoverBrush on hover and press (5.7). ToastCloseSize -->
+    <Style x:Key="ToastCloseButtonStyle" BasedOn="{StaticResource ToolButtonStyle}" TargetType="Button">
+        <Setter Property="Width" Value="{StaticResource ToastCloseSize}" />
+        <Setter Property="Height" Value="{StaticResource ToastCloseSize}" />
+        <Setter Property="Margin" Value="{StaticResource Zero}" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="Foreground" Value="{DynamicResource Fg2Brush}" />
+        <Style.Triggers>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource HoverBrush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Close icon 12, cross on the 20 grid. ToastCloseIconSize -->
+    <Style x:Key="ToastCloseIconStyle" TargetType="ContentControl">
+        <Setter Property="Width" Value="{StaticResource ToastCloseIconSize}" />
+        <Setter Property="Height" Value="{StaticResource ToastCloseIconSize}" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template" Value="{StaticResource ToastCloseIconTemplate}" />
+        <Setter Property="Tag" Value="{StaticResource ToastCrossGeometry}" />
+    </Style>
+
+    <!-- Action button 28: secondary DocBrush (card) / Stroke2Brush, hover BarBrush (card2) / Fg3Brush, press PressBrush;
+         main AccentBrush / OnAccentBrush semibold, OpacityPrimaryHover on hover (5.7, E-26).
+         Tokens: ToastActionHeight, ToastActionPadding, ToastActionGap, FontSizeSmall -->
+    <Style x:Key="ToastActionButtonStyle" BasedOn="{StaticResource StandardButtonStyle}" TargetType="Button">
+        <Setter Property="Height" Value="{StaticResource ToastActionHeight}" />
+        <Setter Property="Padding" Value="{StaticResource ToastActionPadding}" />
+        <Setter Property="Margin" Value="{StaticResource ToastActionGap}" />
+        <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+        <Setter Property="Background" Value="{DynamicResource DocBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Stroke2Brush}" />
+        <Setter Property="Foreground" Value="{DynamicResource FgBrush}" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource BarBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Fg3Brush}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PressBrush}" />
+            </Trigger>
+            <DataTrigger Binding="{Binding IsPrimary}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource OnAccentBrush}" />
+                <Setter Property="FontWeight" Value="{StaticResource FontWeightSemiBold}" />
+            </DataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsPrimary}" Value="True" />
+                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Opacity" Value="{StaticResource OpacityPrimaryHover}" />
+            </MultiDataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Timer bar: ToastTimerHeight at the bottom edge, color of the type, only on toasts that close by themselves (TS-23) -->
+    <Style x:Key="ToastTimerStyle" TargetType="Border">
+        <Setter Property="Height" Value="{StaticResource ToastTimerHeight}" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="Background" Value="{DynamicResource InfBrush}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Type}" Value="Success">
+                <Setter Property="Background" Value="{DynamicResource OkBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Type}" Value="Warning">
+                <Setter Property="Background" Value="{DynamicResource WarnBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding HasTimer}" Value="False">
+                <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 
     <!-- C-19 dialog: DialogMaxWidth, DialogButtonPadding, focus kept inside (E-06); veil, body and footer brushes in Tokens.Light/Dark (ContentDialog*) -->

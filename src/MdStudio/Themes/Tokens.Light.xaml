@@ -59,6 +59,42 @@
     <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
     <SolidColorBrush x:Key="CloseHoverBrush" Color="{StaticResource CloseHoverColor}" />
 
+    <!-- TOASTS (toast specification 5.1): kicker and timer bar, background, border, badge fill, badge icon -->
+    <Color x:Key="OkColor">#FF0F7B0F</Color>
+    <Color x:Key="OkBgColor">#FFE1F5DF</Color>
+    <Color x:Key="OkBdColor">#FFB9DFB5</Color>
+    <Color x:Key="OkFillColor">#FF107C10</Color>
+    <Color x:Key="OkOnColor">#FFFFFFFF</Color>
+    <Color x:Key="WarnColor">#FF7A4800</Color>
+    <Color x:Key="WarnBgColor">#FFFFF3CD</Color>
+    <Color x:Key="WarnBdColor">#FFECD48A</Color>
+    <Color x:Key="WarnFillColor">#FFF2B705</Color>
+    <Color x:Key="WarnOnColor">#FF2B1D00</Color>
+    <Color x:Key="ErrColor">#FFC42B1C</Color>
+    <Color x:Key="ErrBgColor">#FFFDE8EA</Color>
+    <Color x:Key="ErrFillColor">#FFC42B1C</Color>
+    <Color x:Key="ErrOnColor">#FFFFFFFF</Color>
+    <Color x:Key="InfColor">#FF0067C0</Color>
+    <Color x:Key="InfBgColor">#FFE7F1FB</Color>
+    <Color x:Key="InfBdColor">#FFB7D3EE</Color>
+    <SolidColorBrush x:Key="OkBrush" Color="{StaticResource OkColor}" />
+    <SolidColorBrush x:Key="OkBgBrush" Color="{StaticResource OkBgColor}" />
+    <SolidColorBrush x:Key="OkBdBrush" Color="{StaticResource OkBdColor}" />
+    <SolidColorBrush x:Key="OkFillBrush" Color="{StaticResource OkFillColor}" />
+    <SolidColorBrush x:Key="OkOnBrush" Color="{StaticResource OkOnColor}" />
+    <SolidColorBrush x:Key="WarnBrush" Color="{StaticResource WarnColor}" />
+    <SolidColorBrush x:Key="WarnBgBrush" Color="{StaticResource WarnBgColor}" />
+    <SolidColorBrush x:Key="WarnBdBrush" Color="{StaticResource WarnBdColor}" />
+    <SolidColorBrush x:Key="WarnFillBrush" Color="{StaticResource WarnFillColor}" />
+    <SolidColorBrush x:Key="WarnOnBrush" Color="{StaticResource WarnOnColor}" />
+    <SolidColorBrush x:Key="ErrBrush" Color="{StaticResource ErrColor}" />
+    <SolidColorBrush x:Key="ErrBgBrush" Color="{StaticResource ErrBgColor}" />
+    <SolidColorBrush x:Key="ErrFillBrush" Color="{StaticResource ErrFillColor}" />
+    <SolidColorBrush x:Key="ErrOnBrush" Color="{StaticResource ErrOnColor}" />
+    <SolidColorBrush x:Key="InfBrush" Color="{StaticResource InfColor}" />
+    <SolidColorBrush x:Key="InfBgBrush" Color="{StaticResource InfBgColor}" />
+    <SolidColorBrush x:Key="InfBdBrush" Color="{StaticResource InfBdColor}" />
+
     <!-- WPF UI ALIASES -->
     <SolidColorBrush x:Key="ApplicationBackgroundBrush" Color="{StaticResource BarColor}" />
     <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="{StaticResource FgColor}" />

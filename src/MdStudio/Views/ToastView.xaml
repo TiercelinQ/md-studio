@@ -1,0 +1,89 @@
+<UserControl
+    x:Class="MdStudio.Views.ToastView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:res="clr-namespace:MdStudio.Resources"
+    Style="{StaticResource ToastViewStyle}">
+    <!-- One toast (toast specification, section 4): badge, kicker, title, message, close, actions, timer bar -->
+    <UserControl.InputBindings>
+        <!-- TS-51: Escape closes the toast holding the keyboard focus -->
+        <KeyBinding Key="Escape" Command="{Binding CloseCommand}" />
+    </UserControl.InputBindings>
+    <UserControl.RenderTransform>
+        <TranslateTransform x:Name="Slide" />
+    </UserControl.RenderTransform>
+
+    <Grid>
+        <Border x:Name="Mask" Style="{StaticResource ToastMaskStyle}" />
+        <Grid>
+            <Grid.OpacityMask>
+                <VisualBrush Visual="{Binding ElementName=Mask}" />
+            </Grid.OpacityMask>
+
+            <Border Style="{StaticResource ToastSurfaceStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="{StaticResource ToastBadgeColumn}" />
+                        <ColumnDefinition Width="{StaticResource ToastColumnGap}" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="{StaticResource ToastColumnGap}" />
+                        <ColumnDefinition Width="{StaticResource ToastCloseColumn}" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Badge: decorative, the kicker carries the type (TS-63) -->
+                    <Border Grid.RowSpan="2" Style="{StaticResource ToastBadgeStyle}">
+                        <ContentControl Style="{StaticResource ToastBadgeIconStyle}" />
+                    </Border>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Style="{StaticResource ToastKickerStyle}" Text="{Binding Kicker}" />
+                        <TextBlock Style="{StaticResource ToastTitleStyle}" Text="{Binding Title}" />
+                        <TextBlock Style="{StaticResource ToastMessageStyle}" Text="{Binding Message}" />
+                    </StackPanel>
+
+                    <Button
+                        Grid.Column="4"
+                        AutomationProperties.Name="{x:Static res:Strings.Toast_Close}"
+                        Command="{Binding CloseCommand}"
+                        Style="{StaticResource ToastCloseButtonStyle}"
+                        ToolTip="{x:Static res:Strings.Toast_Close}">
+                        <ContentControl Style="{StaticResource ToastCloseIconStyle}" />
+                    </Button>
+
+                    <ItemsControl
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Grid.ColumnSpan="3"
+                        Margin="{StaticResource ToastActionsMargin}"
+                        Focusable="False"
+                        ItemsSource="{Binding Actions}"
+                        Visibility="{Binding HasActions, Converter={StaticResource BooleanToVisibility}}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button
+                                    Command="{Binding Command}"
+                                    Content="{Binding Label}"
+                                    Style="{StaticResource ToastActionButtonStyle}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Border>
+
+            <Border x:Name="TimerBar" RenderTransformOrigin="0,0.5" Style="{StaticResource ToastTimerStyle}">
+                <Border.RenderTransform>
+                    <ScaleTransform x:Name="TimerScale" />
+                </Border.RenderTransform>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -26,7 +26,7 @@ public sealed partial class ShellViewModel : ObservableObject
     [LoggerMessage(Level = LogLevel.Debug, Message = "Fichier {Name} lu et rendu en {ElapsedMs} ms")]
     private static partial void LogFilePrepared(ILogger logger, string name, double elapsedMs);
 
-    private static readonly CompositeFormat FileExistsFormat = CompositeFormat.Parse(Strings.Notify_FileExists);
+    private static readonly CompositeFormat FileExistsFormat = CompositeFormat.Parse(Strings.Toast_FileExists_Message);
 
     private static readonly string[] FormatProperties =
     [
@@ -576,7 +576,7 @@ public sealed partial class ShellViewModel : ObservableObject
     public void ReportPageFailure(Exception exception)
     {
         LogPageFailure(_logger, exception);
-        _feedback.Show(new ResultError(FeedbackType.Danger, Strings.Error_WebView));
+        _feedback.Show(new ResultError(FeedbackType.Danger, Strings.Toast_WebView_Title, Strings.Toast_WebView_Message));
     }
 
     /// <summary>Handles paths sent by a second launch: opens them and returns.</summary>
@@ -617,7 +617,7 @@ public sealed partial class ShellViewModel : ObservableObject
         // The save dialog does not ask to overwrite: an existing file is opened, never emptied.
         if (File.Exists(path))
         {
-            _feedback.Show(new ResultError(FeedbackType.Info, string.Format(CultureInfo.CurrentCulture, FileExistsFormat, Path.GetFileName(path))));
+            _feedback.Show(new ResultError(FeedbackType.Info, Strings.Toast_FileExists_Title, string.Format(CultureInfo.CurrentCulture, FileExistsFormat, Path.GetFileName(path))));
             await OpenPathAsync(path, ct);
             return;
         }

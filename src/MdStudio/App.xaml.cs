@@ -1,5 +1,7 @@
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows;
 using System.Windows.Threading;
 using MdStudio.Models;
@@ -24,6 +26,8 @@ public partial class App : Application
 
     [LoggerMessage(Level = LogLevel.Information, Message = "{App} {Version} demarre")]
     private static partial void LogStarted(Microsoft.Extensions.Logging.ILogger logger, string app, string version);
+
+    private static readonly CompositeFormat UnexpectedFormat = CompositeFormat.Parse(Strings.Toast_Unexpected_Message);
 
     private IHost? _host;
     private ILogger<App>? _logger;
@@ -90,11 +94,14 @@ public partial class App : Application
                 services.AddSingleton<IPreferencesService, PreferencesService>();
 
                 // WPF UI infrastructure services, used as shipped.
-                services.AddSingleton<ISnackbarService, SnackbarService>();
                 services.AddSingleton<IContentDialogService, ContentDialogService>();
 
+                // Toasts (E-24): the host ViewModel is the feedback service. Resolved on the UI thread,
+                // whose synchronization context it captures (TS-53).
+                services.AddSingleton(_ => new ToastHostViewModel(TimeProvider.System, () => SystemParameters.ClientAreaAnimation));
+                services.AddSingleton<IFeedbackService>(provider => provider.GetRequiredService<ToastHostViewModel>());
+
                 // Project services.
-                services.AddSingleton<IFeedbackService, FeedbackService>();
                 services.AddSingleton<IAppThemeService, AppThemeService>();
                 services.AddSingleton<IDialogService, DialogService>();
                 services.AddSingleton<ITextFileService, TextFileService>();
@@ -203,7 +210,24 @@ public partial class App : Application
     private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
         Log.Error(e.Exception, "Exception non geree sur le thread UI");
-        _host?.Services.GetService<IFeedbackService>()?.Show(new ResultError(FeedbackType.Danger, Strings.Error_Unexpected, e.Exception.Message));
+        var message = string.Format(CultureInfo.CurrentCulture, UnexpectedFormat, e.Exception.Message.TrimEnd('.'));
+        var detail = e.Exception.ToString();
+        _host?.Services.GetService<IFeedbackService>()?.Show(
+            new ResultError(FeedbackType.Danger, Strings.Toast_Unexpected_Title, message),
+            [new ToastAction(Strings.Toast_Action_CopyDetail, IsPrimary: true, () => CopyDetail(detail))]);
         e.Handled = true;
+    }
+
+    private static void CopyDetail(string detail)
+    {
+        try
+        {
+            Clipboard.SetText(detail);
+        }
+        catch (COMException ex)
+        {
+            // The clipboard is held by another application: the detail stays in the log.
+            Log.Warning(ex, "Presse-papiers indisponible");
+        }
     }
 }

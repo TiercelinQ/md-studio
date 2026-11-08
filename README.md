@@ -1,4 +1,4 @@
-# MdStudio - v1.1.0
+# MdStudio - v1.2.0
 
 Desktop Markdown studio for Windows (formerly MdReader). Create a `.md` file or open one, or a whole folder, read it rendered (tables, code highlighting, task lists, Mermaid diagrams), find your way with tabs, an outline, in-document search and zoom, and edit it without writing Markdown syntax, or as raw Markdown in source mode. Saving rewrites **only the blocks you changed**: everything else stays byte-for-byte identical.
 
@@ -18,6 +18,7 @@ Interface in French.
 - Source mode (`Ctrl+U`): the raw Markdown text, read and edited as plain text, with search; unsaved WYSIWYG changes carry over, and the text is rendered again when you leave the mode.
 - Saving (`Ctrl+S`) keeps the original encoding (UTF-8, UTF-8 BOM, UTF-16) and line endings; confirmation when closing a modified tab or the window.
 - Banner when an open file changes or disappears on disk (reload or keep your version).
+- Toast notifications at the bottom right: success, information, warning and error, each with its own badge, color and label; up to four stacked, success 4.5 s, information 6 s, warning 9 s, errors stay until closed; hovering pauses the timer; "Réessayer" after a failed save, "Copier le détail" on an unexpected error; `Échap` closes the focused toast.
 - Light and dark themes, following Windows until a manual choice; narrow-window layout (overlay panes at 820 px and below).
 
 ## Stack
@@ -108,9 +109,9 @@ md-studio/
 │   ├── App.xaml(.cs)          composition root: logging, global handlers, single instance, theme, window
 │   ├── AppConfig.cs           shared constants
 │   ├── Models/                records, enums, Result<T>, page protocol, preferences
-│   ├── Services/              files, rendering, recomposition, folder scan, watchers, theme, dialogs, notifications
-│   ├── ViewModels/            Shell, Explorer, Document (one per tab), FileNode, LinkDialog, IDocumentSurface
-│   ├── Views/                 MainWindow, Layout/ (tabs, bars), Explorer, Outline, Document, EmptyState, Controls/DocumentHost, Dialogs/
+│   ├── Services/              files, rendering, recomposition, folder scan, watchers, theme, dialogs
+│   ├── ViewModels/            Shell, Explorer, Document (one per tab), FileNode, LinkDialog, IDocumentSurface, ToastHost (feedback service), Toast
+│   ├── Views/                 MainWindow, Layout/ (tabs, bars, toast area), Explorer, Outline, Document, EmptyState, Toast, Controls/DocumentHost, Dialogs/
 │   ├── Converters/ · Helpers/ · Resources/Strings.resx
 │   ├── Themes/                Tokens(.Light/.Dark).xaml, Icons.xaml, Styles.xaml
 │   ├── Web/                   host.html, doc.html, doc.css, page.js, editor.js, vendor/
@@ -149,7 +150,7 @@ Markdig parses the document with source positions; each top-level block is rende
 
 - Strict MVVM: views bind, ViewModels hold state and commands, services do the work behind interfaces.
 - Zero visual literal in XAML or C#: every color, size and spacing is a resource of `Themes/Tokens*.xaml`.
-- Expected failures are returned as `Result<T>` and shown as notifications; unexpected ones reach the three global handlers and the log.
+- Expected failures are returned as `Result<T>` (type, title, message) and shown as toasts; unexpected ones reach the three global handlers, the log and an error toast.
 - `.claude/settings.json` adds a Stop hook running `dotnet format --verify-no-changes` when C# or XAML files changed (`tools/stop-format.ps1`); edit or remove it there.
 
 ## Changelog

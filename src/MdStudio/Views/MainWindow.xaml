@@ -68,11 +68,11 @@
             Grid.RowSpan="5"
             Panel.ZIndex="{StaticResource ZDialog}" />
 
-        <ui:SnackbarPresenter
-            x:Name="NotificationPresenter"
+        <!-- Toasts above everything, last in the tab order (TS-14, TS-48). DataContext assigned in the constructor -->
+        <layout:ToastHost
+            x:Name="Toasts"
             Grid.Row="0"
             Grid.RowSpan="5"
-            Panel.ZIndex="{StaticResource ZSnackbar}"
-            Style="{StaticResource NotificationPresenterStyle}" />
+            Panel.ZIndex="{StaticResource ZToast}" />
     </Grid>
 </ui:FluentWindow>

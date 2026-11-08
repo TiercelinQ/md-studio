@@ -18,13 +18,13 @@ Référence fonctionnelle : `../new-markdown-note/specs/cahier-des-charges-lecte
 - E-02 : pas de Mica — reason: DS-04 du cahier.
 - E-03 : icônes filaires de l'annexe A (`Themes/Icons.xaml`) au lieu de Segoe Fluent Icons — reason: §5.6 du cahier.
 - E-04 : barre de titre portant les onglets de documents, pas de NavigationView — reason: T-08, zone A.
-- E-05 : notifications en bas au centre, une seule à la fois, information 3,2 s, erreur jusqu'au ×, sans icône — reason: F-NOT, phase 3.
+- E-05 : toasts du cahier `ref-documentations/cahier-des-charges-toasts.md` (pile de 4 en bas à droite, succès 4,5 s, information 6 s, avertissement 9 s, erreur persistante, pause au survol, badge, actions) - reason: cahier des charges des toasts (2026-11-08), remplace la notification unique de la phase 3.
 - E-06 : boîtes de dialogue sans ×, voile non fermant, boutons de largeurs égales — reason: F-ENR-04, C-19.
 - E-07 : bandeau en ligne « Le fichier a changé sur le disque. » — reason: choix de la phase 2.
 - E-08 : ouverture d'URL `http` / `https` issues d'un document par le shell — reason: F-LEC-04.
 - E-09 : liens internes et images résolus sans confinement à une racine, restreints par extension, en lecture seule — reason: liens `../` (F-LEC-03, F-LEC-06).
 - E-10 : `IDocumentSurface`, interface implémentée par la vue et tenue par le ViewModel — reason: pont asynchrone avec la page WebView2.
-- E-11 : `DialogService` dans `Services/` avec des types WPF — reason: adaptateur UI comme `FeedbackService`.
+- E-11 : `DialogService` dans `Services/` avec des types WPF — reason: adaptateur UI, comme l'était l'ancien `FeedbackService`.
 - E-12 : seuils 820 et 560 dans `AppConfig` — reason: ils pilotent un comportement.
 - E-13 : xunit.v3 4.0.2 — reason: version stable confirmée en phase 1.
 - E-14 : `IDialogService.ShowContentAsync` générique, `LinkDialogContent` affiché par `DataTemplate` — reason: pas de dépendance de `Services/` vers `ViewModels/`.
@@ -37,6 +37,9 @@ Référence fonctionnelle : `../new-markdown-note/specs/cahier-des-charges-lecte
 - E-21 : interfaces existantes étendues (`IDocumentSurface`, `ITextFileService`, `IDialogService`) - reason: mode Source et création de fichier portés par les services existants, sans nouveau fichier.
 - E-22 : colonne du document sans largeur maximale (le cahier §5.4 fixe 760 px) - reason: demande de l'utilisateur.
 - E-23 : icône `IconFileNewGeometry` hors annexe A - reason: bouton « Créer un fichier », même tracé que les icônes du cahier.
+- E-24 : `IFeedbackService` déclaré et implémenté par `ViewModels/ToastHostViewModel.cs` ; `ResultError(Type, Title, Message)` - reason: état et minuteurs des toasts relèvent de la présentation ; titre et message obligatoires (TS-21).
+- E-25 : pas d'ombre sous les toasts (écart au cahier des toasts 5.3) - reason: règle du framework « Fluent owns depth », choix de l'utilisateur.
+- E-26 : kicker sans espacement des lettres, majuscules faites par le ViewModel, survol du bouton principal par opacité - reason: `TextBlock` WPF sans espacement des lettres ni casse, pas de filtre de luminosité.
 
 ## Maintenance
 
