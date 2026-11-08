@@ -45,14 +45,16 @@ public sealed class DocumentViewModelTests : IDisposable
         await _document.AttachSurfaceAsync(_surface, TestContext.Current.CancellationToken);
         _surface.SerializeAsync(Arg.Any<CancellationToken>()).Returns([new EditedBlock(0, null), new EditedBlock(null, "Autre.")]);
         _files.WriteAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<TextFormat>(), Arg.Any<CancellationToken>())
-            .Returns(Result<TextFile>.Failure(new ResultError(FeedbackType.Danger, "Impossible d'enregistrer")));
+            .Returns(Result<TextFile>.Failure(new ResultError(FeedbackType.Danger, "Enregistrement impossible", "a.md n'a pas pu être écrit.")));
         _document.HandlePageMessage(Changed(new PageBlock { Src = 0 }, new PageBlock { Md = "Autre." }));
 
         var saved = await _document.SaveAsync(TestContext.Current.CancellationToken);
 
         Assert.False(saved);
         Assert.True(_document.IsModified);
-        _feedback.Received(1).Show(Arg.Is<ResultError>(e => e.Type == FeedbackType.Danger));
+        _feedback.Received(1).Show(
+            Arg.Is<ResultError>(e => e.Type == FeedbackType.Danger),
+            Arg.Is<IReadOnlyList<ToastAction>?>(a => a != null && a.Count == 1 && a[0].IsPrimary));
     }
 
     [Fact]

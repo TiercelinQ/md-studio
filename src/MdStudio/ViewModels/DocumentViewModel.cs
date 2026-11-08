@@ -29,8 +29,8 @@ public sealed partial class DocumentViewModel(
     ILogger<DocumentViewModel> logger) : ObservableObject
 {
     private static readonly CompositeFormat SearchCounterFormat = CompositeFormat.Parse(Strings.Search_Counter);
-    private static readonly CompositeFormat SavedFormat = CompositeFormat.Parse(Strings.Notify_Saved);
-    private static readonly CompositeFormat NotFoundFormat = CompositeFormat.Parse(Strings.Error_NotFound);
+    private static readonly CompositeFormat SavedFormat = CompositeFormat.Parse(Strings.Toast_Saved_Message);
+    private static readonly CompositeFormat NotFoundFormat = CompositeFormat.Parse(Strings.Toast_NotFound_Message);
 
     [LoggerMessage(Level = LogLevel.Debug, Message = "Message de page ignore {Type}")]
     private static partial void LogPageMessageIgnored(ILogger logger, string type);
@@ -309,7 +309,7 @@ public sealed partial class DocumentViewModel(
                 LinkRequested?.Invoke(this, EventArgs.Empty);
                 break;
             case "notify" when message.Key == "mermaidValidated":
-                feedback.Show(new ResultError(FeedbackType.Info, Strings.Notify_DiagramValidated));
+                feedback.Show(new ResultError(FeedbackType.Success, Strings.Toast_DiagramValidated_Title, Strings.Toast_DiagramValidated_Message));
                 break;
             default:
                 LogPageMessageIgnored(logger, message.Type);
@@ -335,7 +335,7 @@ public sealed partial class DocumentViewModel(
         var result = await files.WriteAsync(FilePath, text, Format, ct);
         if (!result.Ok)
         {
-            feedback.Show(result.Error!);
+            feedback.Show(result.Error!, [new ToastAction(Strings.Toast_Action_Retry, IsPrimary: true, () => _ = RetrySaveAsync())]);
             return false;
         }
 
@@ -345,8 +345,20 @@ public sealed partial class DocumentViewModel(
         IsModified = false;
         IsDiskChanged = false;
         IsDiskDeleted = false;
-        feedback.Show(new ResultError(FeedbackType.Info, string.Format(CultureInfo.CurrentCulture, SavedFormat, FileName)));
+        feedback.Show(new ResultError(FeedbackType.Info, Strings.Toast_Saved_Title, string.Format(CultureInfo.CurrentCulture, SavedFormat, FileName)));
         return true;
+    }
+
+    private async Task RetrySaveAsync()
+    {
+        try
+        {
+            await SaveAsync(CancellationToken.None);
+        }
+        catch (OperationCanceledException)
+        {
+            // Not an error (rules/errors.md).
+        }
     }
 
     /// <summary>Reacts to a change of the file on disk; the application's own writes are ignored.</summary>
@@ -569,7 +581,7 @@ public sealed partial class DocumentViewModel(
 
         if (!File.Exists(target))
         {
-            feedback.Show(new ResultError(FeedbackType.Danger, string.Format(CultureInfo.CurrentCulture, NotFoundFormat, Path.GetFileName(target))));
+            feedback.Show(new ResultError(FeedbackType.Danger, Strings.Toast_NotFound_Title, string.Format(CultureInfo.CurrentCulture, NotFoundFormat, Path.GetFileName(target))));
             return;
         }
 

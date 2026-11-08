@@ -4,7 +4,11 @@ All notable changes to this project are documented in this file.
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
 ## [Unreleased]
+### Added
+- Toast actions: "Réessayer" on a failed save, "Copier le détail" on an unexpected error.
+
 ### Changed
+- Notifications are toasts at the bottom right: success, information, warning and error, each with a title, a message, a badge and its own colors in both themes; up to four stacked (the oldest non-error goes first), success 4.5 s, information 6 s, warning 9 s, errors until closed; the timer pauses on hover, a repeated message restarts its toast instead of stacking, `Échap` closes the focused toast, and screen readers announce warnings and errors as alerts. Every message is rewritten as a title and a message.
 - The application is renamed from MdReader to MdStudio: executable `MdStudio.exe`, data folder `%APPDATA%\MdStudio`, debug variable `MDSTUDIO_DEBUG`. On first launch, the preferences of `%APPDATA%\MdReader` are copied over (that folder is left untouched); logs and the WebView2 profile start fresh. Shortcuts and "Open with" associations must point to `MdStudio.exe`.
 
 ## [1.1.0] - 2026-11-08

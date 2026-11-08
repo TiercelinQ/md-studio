@@ -22,10 +22,10 @@ public partial class MainWindow : FluentWindow
 
     /// <summary>Initializes a new instance of the <see cref="MainWindow"/> class.</summary>
     /// <param name="shell">Shell ViewModel.</param>
-    /// <param name="snackbars">WPF UI snackbar service.</param>
+    /// <param name="toasts">Toast stack.</param>
     /// <param name="dialogs">WPF UI dialog service.</param>
     /// <param name="logger">Logger.</param>
-    public MainWindow(ShellViewModel shell, ISnackbarService snackbars, IContentDialogService dialogs, ILogger<MainWindow> logger)
+    public MainWindow(ShellViewModel shell, ToastHostViewModel toasts, IContentDialogService dialogs, ILogger<MainWindow> logger)
     {
         _shell = shell;
         _logger = logger;
@@ -34,7 +34,7 @@ public partial class MainWindow : FluentWindow
 
         // TitleBar.Header content is realized in the control template and inherits no DataContext (rules/xaml.md).
         Tabs.DataContext = shell;
-        snackbars.SetSnackbarPresenter(NotificationPresenter);
+        Toasts.DataContext = toasts;
         dialogs.SetDialogHost(DialogHost);
 
         shell.PropertyChanged += OnShellPropertyChanged;
@@ -121,7 +121,8 @@ public partial class MainWindow : FluentWindow
     private void OnPreviewKeyDown(object sender, KeyEventArgs e)
     {
         var key = e.Key == Key.System ? e.SystemKey : e.Key;
-        if (DialogHost.IsKeyboardFocusWithin || KeyName(key) is not { } name)
+        // A toast holding the focus handles its own keys: Escape closes it (TS-51).
+        if (DialogHost.IsKeyboardFocusWithin || Toasts.IsKeyboardFocusWithin || KeyName(key) is not { } name)
         {
             return;
         }

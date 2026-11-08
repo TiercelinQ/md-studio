@@ -21,7 +21,8 @@ public interface IExternalLauncher
 /// <param name="logger">Logger.</param>
 public sealed partial class ExternalLauncher(ILogger<ExternalLauncher> logger) : IExternalLauncher
 {
-    private static readonly CompositeFormat LinkRefusedFormat = CompositeFormat.Parse(Strings.Error_LinkRefused);
+    private static readonly CompositeFormat LinkRefusedFormat = CompositeFormat.Parse(Strings.Toast_LinkRefused_Message);
+    private static readonly CompositeFormat NoBrowserFormat = CompositeFormat.Parse(Strings.Toast_NoBrowser_Message);
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "Lien refuse {Url}")]
     private static partial void LogLinkRefused(ILogger logger, string url);
@@ -48,7 +49,7 @@ public sealed partial class ExternalLauncher(ILogger<ExternalLauncher> logger) :
         {
             LogLinkRefused(logger, url);
             return Result<Unit>.Failure(new ResultError(
-                FeedbackType.Danger, string.Format(CultureInfo.CurrentCulture, LinkRefusedFormat, url)));
+                FeedbackType.Danger, Strings.Toast_LinkNotOpened_Title, string.Format(CultureInfo.CurrentCulture, LinkRefusedFormat, url)));
         }
 
         try
@@ -61,7 +62,7 @@ public sealed partial class ExternalLauncher(ILogger<ExternalLauncher> logger) :
         {
             LogBrowserMissing(logger, ex, url);
             return Result<Unit>.Failure(new ResultError(
-                FeedbackType.Danger, string.Format(CultureInfo.CurrentCulture, LinkRefusedFormat, url)));
+                FeedbackType.Danger, Strings.Toast_LinkNotOpened_Title, string.Format(CultureInfo.CurrentCulture, NoBrowserFormat, url)));
         }
     }
 }

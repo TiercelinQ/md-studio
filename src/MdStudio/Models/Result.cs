@@ -18,11 +18,20 @@ public enum FeedbackType
     Danger,
 }
 
-/// <summary>Expected failure returned by a service, ready to be shown to the user.</summary>
-/// <param name="Type">Severity of the failure.</param>
-/// <param name="Message">Main message, already localized.</param>
-/// <param name="Description">Optional detail, already localized.</param>
-public sealed record ResultError(FeedbackType Type, string Message, string? Description = null);
+/// <summary>
+/// Message shown to the user as a toast, and expected failure returned by a service. Both texts are
+/// mandatory and already localized (toast specification TS-21).
+/// </summary>
+/// <param name="Type">Severity: it alone sets the toast duration, persistence and accessibility role.</param>
+/// <param name="Title">Short title, no final period.</param>
+/// <param name="Message">One or two sentences: the cause, then the possible action.</param>
+public sealed record ResultError(FeedbackType Type, string Title, string Message);
+
+/// <summary>Button of a toast (at most two per toast, TS-03).</summary>
+/// <param name="Label">Infinitive verb, three words at most.</param>
+/// <param name="IsPrimary">True for the main action, shown first in the accent color.</param>
+/// <param name="Run">Work done on click; the toast closes afterwards (TS-43).</param>
+public sealed record ToastAction(string Label, bool IsPrimary, Action Run);
 
 /// <summary>Empty value for operations that return nothing.</summary>
 public sealed record Unit

@@ -100,7 +100,7 @@ public sealed partial class TextFileService(ILogger<TextFileService> logger) : I
         catch (NotTextFileException ex)
         {
             LogNotText(logger, ex, path);
-            return Result<TextFile>.Failure(new ResultError(FeedbackType.Danger, Format(Strings.Error_NotText, path)));
+            return Result<TextFile>.Failure(Error(FeedbackType.Danger, Strings.Toast_NotText_Title, Strings.Toast_NotText_Message, path));
         }
         catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
         {
@@ -131,7 +131,7 @@ public sealed partial class TextFileService(ILogger<TextFileService> logger) : I
         {
             LogWriteFailed(logger, ex, path);
             DeleteQuietly(temp);
-            return Result<TextFile>.Failure(new ResultError(FeedbackType.Danger, Format(Strings.Error_SaveFailed, path)));
+            return Result<TextFile>.Failure(Error(FeedbackType.Danger, Strings.Toast_SaveFailed_Title, Strings.Toast_SaveFailed_Message, path));
         }
         catch (OperationCanceledException)
         {
@@ -147,7 +147,7 @@ public sealed partial class TextFileService(ILogger<TextFileService> logger) : I
             || !AppConfig.MarkdownExtensions.Contains(Path.GetExtension(path), StringComparer.OrdinalIgnoreCase))
         {
             LogCreateRejected(logger, path);
-            return Result<TextFile>.Failure(new ResultError(FeedbackType.Warning, Format(Strings.Error_NotMarkdown, path)));
+            return Result<TextFile>.Failure(Error(FeedbackType.Warning, Strings.Toast_NotMarkdown_Title, Strings.Toast_NotMarkdown_Message, path));
         }
 
         ct.ThrowIfCancellationRequested();
@@ -162,16 +162,19 @@ public sealed partial class TextFileService(ILogger<TextFileService> logger) : I
         catch (Exception ex) when (ex is UnauthorizedAccessException or IOException)
         {
             LogCreateFailed(logger, ex, path);
-            return Result<TextFile>.Failure(new ResultError(FeedbackType.Danger, Format(Strings.Error_CreateFailed, path)));
+            return Result<TextFile>.Failure(Error(FeedbackType.Danger, Strings.Toast_CreateFailed_Title, Strings.Toast_CreateFailed_Message, path));
         }
     }
 
-    private static ResultError NotFound(string path) => new(FeedbackType.Danger, Format(Strings.Error_NotFound, path));
+    private static ResultError NotFound(string path) =>
+        Error(FeedbackType.Danger, Strings.Toast_NotFound_Title, Strings.Toast_NotFound_Message, path);
 
-    private static ResultError Denied(string path) => new(FeedbackType.Danger, Format(Strings.Error_OpenDenied, path));
+    private static ResultError Denied(string path) =>
+        Error(FeedbackType.Danger, Strings.Toast_OpenDenied_Title, Strings.Toast_OpenDenied_Message, path);
 
-    private static string Format(string template, string path) =>
-        string.Format(CultureInfo.CurrentCulture, template, Path.GetFileName(path));
+    /// <summary>Builds a toast message naming the file by its name, never by its full path.</summary>
+    private static ResultError Error(FeedbackType type, string title, string messageTemplate, string path) =>
+        new(type, title, string.Format(CultureInfo.CurrentCulture, messageTemplate, Path.GetFileName(path)));
 
     private void DeleteQuietly(string temp)
     {
