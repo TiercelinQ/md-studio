@@ -26,6 +26,15 @@ public sealed partial class ShellViewModel : ObservableObject
     [LoggerMessage(Level = LogLevel.Debug, Message = "Fichier {Name} lu et rendu en {ElapsedMs} ms")]
     private static partial void LogFilePrepared(ILogger logger, string name, double elapsedMs);
 
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Erreur de la page {Kind} (onglet {Tab}) : {Detail}")]
+    private static partial void LogPageError(ILogger logger, string? kind, string? tab, string? detail);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Sonde de la page (onglet {Tab}) : {Detail}")]
+    private static partial void LogPageProbe(ILogger logger, string? tab, string? detail);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "WebView2 {Source} : {Detail}")]
+    private static partial void LogPageDiagnostic(ILogger logger, string source, string detail);
+
     private static readonly CompositeFormat FileExistsFormat = CompositeFormat.Parse(Strings.Toast_FileExists_Message);
 
     private static readonly string[] FormatProperties =
@@ -511,6 +520,17 @@ public sealed partial class ShellViewModel : ObservableObject
     /// <param name="message">Message.</param>
     public void HandlePageMessage(PageMessage message)
     {
+        // Diagnostics of the page: logged here because the container page has no tab of its own.
+        switch (message.Type)
+        {
+            case "pageError":
+                LogPageError(_logger, message.Key, message.Tab, message.Detail);
+                return;
+            case "probe":
+                LogPageProbe(_logger, message.Tab, message.Detail);
+                return;
+        }
+
         var document = Documents.FirstOrDefault(d => d.Id == message.Tab);
         if (message.Type == "zoomWheel")
         {
@@ -578,6 +598,11 @@ public sealed partial class ShellViewModel : ObservableObject
         LogPageFailure(_logger, exception);
         _feedback.Show(new ResultError(FeedbackType.Danger, Strings.Toast_WebView_Title, Strings.Toast_WebView_Message));
     }
+
+    /// <summary>Logs a diagnostic of the page host: runtime version, navigation outcome, process failure.</summary>
+    /// <param name="source">Origin of the diagnostic.</param>
+    /// <param name="detail">Its text.</param>
+    public void ReportPageDiagnostic(string source, string detail) => LogPageDiagnostic(_logger, source, detail);
 
     /// <summary>Handles paths sent by a second launch: opens them and returns.</summary>
     /// <param name="paths">Absolute paths.</param>

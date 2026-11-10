@@ -18,10 +18,48 @@
             }
         };
 
+        // Failures of the page never reach the application otherwise: they are written to its log.
+        const reportError = (kind, text) => window.chrome.webview.postMessage({ type: 'pageError', key: kind, detail: String(text).slice(0, 500) });
+        window.addEventListener('error', (event) => reportError('container-error', `${event.message} (${event.filename}:${event.lineno})`));
+        window.addEventListener('unhandledrejection', (event) => reportError('container-rejection', event.reason?.message ?? event.reason));
+
+        // State of a tab shortly after its rendering: tells a hidden, an empty and an undrawn page apart.
+        const probe = (tab) => {
+            try {
+                const frame = frames.get(tab);
+                if (!frame) { return; }
+                const inner = frame.contentDocument?.getElementById('doc');
+                const innerStyle = inner ? frame.contentWindow.getComputedStyle(inner) : null;
+                const frameRect = frame.getBoundingClientRect();
+                const docRect = inner?.getBoundingClientRect();
+                window.chrome.webview.postMessage({
+                    type: 'probe',
+                    tab: tab,
+                    detail: JSON.stringify({
+                        classes: frame.className,
+                        frame: `${Math.round(frameRect.width)}x${Math.round(frameRect.height)}`,
+                        visibility: getComputedStyle(frame).visibility,
+                        textLength: inner ? inner.textContent.length : -1,
+                        doc: docRect ? `${Math.round(docRect.width)}x${Math.round(docRect.height)}` : null,
+                        display: innerStyle?.display,
+                        opacity: innerStyle?.opacity,
+                        color: innerStyle?.color,
+                        background: innerStyle?.backgroundColor,
+                        pageVisibility: document.visibilityState,
+                        pixelRatio: window.devicePixelRatio,
+                        agent: navigator.userAgent,
+                    }),
+                });
+            } catch (error) {
+                reportError('probe', error?.message ?? error);
+            }
+        };
+
         window.mdrHost = {
             send(tab, message) {
                 if (message.type === 'rendered') {
                     frames.get(tab)?.classList.add('rendered');
+                    setTimeout(() => probe(tab), 600);
                 }
 
                 message.tab = tab;
@@ -67,6 +105,12 @@
 
     // ---------------------------------------------------------------- document page
     const tab = new URLSearchParams(location.search).get('tab');
+
+    // Registered first so that a failure of any later script (editor.js, libraries included) reaches the log.
+    const reportError = (kind, text) => window.parent.mdrHost.send(tab, { type: 'pageError', key: kind, detail: String(text).slice(0, 500) });
+    window.addEventListener('error', (event) => reportError('document-error', `${event.message} (${event.filename}:${event.lineno})`));
+    window.addEventListener('unhandledrejection', (event) => reportError('document-rejection', event.reason?.message ?? event.reason));
+
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const state = { mode: 'Reading', dark: false, hits: [], current: -1, heading: null, mermaidReady: null, seq: 0 };
     let doc = null;
