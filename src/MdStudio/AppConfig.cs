@@ -10,7 +10,7 @@ public static class AppConfig
     public const string LegacyAppName = "MdReader";
 
     /// <summary>Application version, mirror of the project <c>Version</c> (rules/versioning.md).</summary>
-    public const string AppVersion = "1.2.0";
+    public const string AppVersion = "1.2.1";
 
     /// <summary>Accent of the light theme (design system, specification 5.2).</summary>
     public const string AccentColor = "#0067C0";

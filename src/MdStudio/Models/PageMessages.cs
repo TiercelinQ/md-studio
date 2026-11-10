@@ -78,7 +78,7 @@ public sealed class HostMessage
 /// <summary>Message sent by the document page to the application.</summary>
 public sealed class PageMessage
 {
-    /// <summary>Gets the message type (<c>hostReady</c>, <c>ready</c>, <c>rendered</c>, <c>changed</c>, <c>sourceChanged</c>, <c>stats</c>, <c>currentHeading</c>, <c>searchResult</c>, <c>formatState</c>, <c>link</c>, <c>requestLink</c>, <c>serialized</c>, <c>zoomWheel</c>, <c>notify</c>, <c>drop</c>).</summary>
+    /// <summary>Gets the message type (<c>hostReady</c>, <c>ready</c>, <c>rendered</c>, <c>changed</c>, <c>sourceChanged</c>, <c>stats</c>, <c>currentHeading</c>, <c>searchResult</c>, <c>formatState</c>, <c>link</c>, <c>requestLink</c>, <c>serialized</c>, <c>zoomWheel</c>, <c>notify</c>, <c>drop</c>, <c>pageError</c>, <c>probe</c>).</summary>
     public string Type { get; init; } = string.Empty;
 
     /// <summary>Gets the source tab identifier.</summary>
@@ -114,8 +114,11 @@ public sealed class PageMessage
     /// <summary>Gets the wheel direction, positive to zoom in (<c>zoomWheel</c>).</summary>
     public double? Delta { get; init; }
 
-    /// <summary>Gets the notification key (<c>notify</c>).</summary>
+    /// <summary>Gets the notification key (<c>notify</c>) or the kind of failure (<c>pageError</c>).</summary>
     public string? Key { get; init; }
+
+    /// <summary>Gets the diagnostic text, written to the log as is (<c>pageError</c>, <c>probe</c>).</summary>
+    public string? Detail { get; init; }
 
     /// <summary>Gets the request identifier (<c>serialized</c>).</summary>
     public int? RequestId { get; init; }

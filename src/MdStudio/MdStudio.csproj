@@ -6,7 +6,7 @@
     <RootNamespace>MdStudio</RootNamespace>
     <AssemblyName>MdStudio</AssemblyName>
     <!-- Canonical version (rules/versioning.md); AppConfig.AppVersion mirrors it. -->
-    <Version>1.2.0</Version>
+    <Version>1.2.1</Version>
     <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
     <!-- Required by the LibraryImport source generator of NaturalStringComparer. -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

@@ -68,6 +68,17 @@ public sealed class DocumentHost : ContentControl, IDisposable
         await _web.EnsureCoreWebView2Async(_environment);
 
         var core = _web.CoreWebView2;
+
+        // Written to the log: a page that stays blank raises no exception, so these are the only trace of it.
+        ShellViewModel shell = _shell;
+        shell.ReportPageDiagnostic("runtime", _environment.BrowserVersionString);
+        core.NavigationCompleted += (_, args) =>
+            shell.ReportPageDiagnostic("navigation", $"{args.IsSuccess} {args.WebErrorStatus} HTTP {args.HttpStatusCode}");
+        core.FrameNavigationCompleted += (_, args) =>
+            shell.ReportPageDiagnostic("cadre", $"{args.IsSuccess} {args.WebErrorStatus} HTTP {args.HttpStatusCode}");
+        core.ProcessFailed += (_, args) =>
+            shell.ReportPageDiagnostic("processus", $"{args.ProcessFailedKind} {args.Reason} code {args.ExitCode}");
+
         var settings = core.Settings;
 #if DEBUG
         settings.AreDevToolsEnabled = true;

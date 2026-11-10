@@ -1,4 +1,4 @@
-# MdStudio - v1.2.0
+# MdStudio - v1.2.1
 
 Desktop Markdown studio for Windows (formerly MdReader). Create a `.md` file or open one, or a whole folder, read it rendered (tables, code highlighting, task lists, Mermaid diagrams), find your way with tabs, an outline, in-document search and zoom, and edit it without writing Markdown syntax, or as raw Markdown in source mode. Saving rewrites **only the blocks you changed**: everything else stays byte-for-byte identical.
 

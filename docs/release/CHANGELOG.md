@@ -5,6 +5,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-11-10
+### Changed
+- Failures of the document page are now written to the log: JavaScript errors, the WebView2 runtime version, page and frame navigation results, WebView2 process failures, and a state probe of each tab shortly after it renders. A document that stays blank leaves a trace instead of none.
+
 ## [1.2.0] - 2026-11-08
 ### Added
 - Toast actions: "Réessayer" on a failed save, "Copier le détail" on an unexpected error.
